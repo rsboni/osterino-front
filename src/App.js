@@ -66,7 +66,7 @@ function App() {
         console.log(value)
 
         console.log("Got Presure: ", pressure)
-        setYValue(sp =>  ([...sp, value.toFixed(0) * 6]));
+        setYValue(sp =>  ([...sp, (pressure/100).toFixed(0) * 6]));
         setPressureState((pressure / 100).toFixed(2))
       })
 
