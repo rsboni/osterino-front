@@ -66,7 +66,10 @@ function App() {
         console.log(value)
 
         console.log("Got Presure: ", pressure)
-        setYValue(sp =>  ([...sp, (pressure/100).toFixed(0) * 6]));
+        if (yValue.length = 4001) {
+          setYValue(sp => (sp.slice(1)))
+        }
+        setYValue(sp =>  ([...sp, (pressure/100).toFixed(2)]));
         setPressureState((pressure / 100).toFixed(2))
       })
 
@@ -163,11 +166,11 @@ function App() {
                         size: 0
                       },
                       xaxis: {
-                        type: 'numeric',
-                        range: 40
+                        type: 'datetime',
+                        range: 400
                       },
                       yaxis: {
-                        max: undefined
+                        max: 15
                       },
                       legend: {
                         show: false
@@ -181,11 +184,11 @@ function App() {
 
                   width="100%"
 
-                  height="200px"
+                  height="300px"
                 />
                 <div>
-                  <TempChart temp={tempState} />
-                  <PressureChart pressure={pressureState} />
+                  <TempChart temp={tempState} width="40%"/>
+                  <PressureChart pressure={pressureState} width="40%" />
                 </div>
               </div>
             )}
