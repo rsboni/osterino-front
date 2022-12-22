@@ -11,6 +11,7 @@ import {
 } from './bluetooth'
 import TempChart from './TempChart.js'
 import PressureChart from './PressureChart';
+import Chart from 'react-apexcharts';
 
 // const useStyles = makeStyles(theme => ({
 //   root: {
@@ -35,7 +36,7 @@ function App() {
     11
   )
   const [device, setDevice] = useState(undefined)
-
+  const [yValue, setYValue ] = useState([]);
 
   const onClick = async () => {
     try {
@@ -44,28 +45,29 @@ function App() {
       const characteristic = await startNotifications(server).catch(e => console.log(e))
       characteristic.addEventListener('characteristicvaluechanged', event => {
         const { value } = event.target
-        var tempState1 = ''        
-        for (var i=0; i< 4; i++){
-            tempState1 += String.fromCharCode(value.getInt8(i))
+        var tempState1 = ''
+        for (var i = 0; i < 4; i++) {
+          tempState1 += String.fromCharCode(value.getInt8(i))
         }
         console.log(value)
         // console.log("int16 ", value.getInt16(0))
 
         console.log("Got temp: ", tempState1)
-        setTempState((tempState1/100).toFixed(2))
+        setTempState((tempState1 / 100).toFixed(2))
       })
 
       const characteristicPressure = await startNotificationsPressure(server).catch(e => console.log(e))
       characteristicPressure.addEventListener('characteristicvaluechanged', event => {
         const { value } = event.target
-        var pressure = ''        
-        for (var i=0; i< value.byteLength; i++){
-            pressure += String.fromCharCode(value.getInt8(i))
+        var pressure = ''
+        for (var i = 0; i < value.byteLength; i++) {
+          pressure += String.fromCharCode(value.getInt8(i))
         }
         console.log(value)
 
         console.log("Got Presure: ", pressure)
-        setPressureState((pressure/100).toFixed(2))
+        setYValue(sp =>  ([...sp, value.toFixed(0) * 6]));
+        setPressureState((pressure / 100).toFixed(2))
       })
 
 
@@ -126,9 +128,65 @@ function App() {
             ) : (
               // tempState + " " + pressureState
               <div>
-              <TempChart temp={tempState} />
-              <PressureChart pressure={pressureState} />
+                <Chart
+                  options={
+                    {
+                      chart: {
+                        id: 'realtime',
+                        height: 350,
+                        type: 'line',
+                        animations: {
+                          enabled: true,
+                          easing: 'linear',
+                          dynamicAnimation: {
+                            speed: 1000
+                          }
+                        },
+                        toolbar: {
+                          show: false
+                        },
+                        zoom: {
+                          enabled: false
+                        }
+                      },
+                      dataLabels: {
+                        enabled: false
+                      },
+                      stroke: {
+                        curve: 'smooth'
+                      },
+                      title: {
+                        text: 'Pressure',
+                        align: 'left'
+                      },
+                      markers: {
+                        size: 0
+                      },
+                      xaxis: {
+                        type: 'numeric',
+                        range: 40
+                      },
+                      yaxis: {
+                        max: undefined
+                      },
+                      legend: {
+                        show: false
+                      },
+                      series: [{
+                        data: [yValue]
+                      }]
+                    }
+                  }
+                  series={[{ data: yValue }]}
 
+                  width="100%"
+
+                  height="200px"
+                />
+                <div>
+                  <TempChart temp={tempState} />
+                  <PressureChart pressure={pressureState} />
+                </div>
               </div>
             )}
           </div>
