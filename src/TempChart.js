@@ -4,11 +4,20 @@ import ReactApexChart from 'react-apexcharts'
 var options = {
   chart: {
   height: 350,
+  width: "50%",
   type: 'radialBar',
   toolbar: {
     show: true
   }
 },
+responsive: [
+  {
+    breakpoint: 1000,
+    options: {
+      width: "100%"
+    }
+  }
+],
 plotOptions: {
   radialBar: {
     startAngle: -135,
@@ -52,7 +61,7 @@ plotOptions: {
       },
       value: {
         formatter: function(val) {
-          return val*130/100 + " ºC";
+          return (val*130/100).toFixed(2) + " ºC";
         },
         color: '#111',
         fontSize: '36px',
