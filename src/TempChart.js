@@ -4,20 +4,11 @@ import ReactApexChart from 'react-apexcharts'
 var options = {
   chart: {
   height: 350,
-  width: "50%",
   type: 'radialBar',
   toolbar: {
-    show: true
+    show: false
   }
 },
-responsive: [
-  {
-    breakpoint: 1000,
-    options: {
-      width: "100%"
-    }
-  }
-],
 plotOptions: {
   radialBar: {
     startAngle: -135,

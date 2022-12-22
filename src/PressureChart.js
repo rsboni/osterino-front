@@ -7,7 +7,7 @@ var options = {
   width: "50%",
   type: 'radialBar',
   toolbar: {
-    show: true
+    show: false
   }
 },
 responsive: [
