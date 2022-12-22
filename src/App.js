@@ -9,7 +9,8 @@ import {
   disconnectFromBluetoothDevice,
   startNotificationsPressure
 } from './bluetooth'
-import TempChart from 'TempChart.js'
+import TempChart from './TempChart.js'
+import PressureChart from './PressureChart';
 
 // const useStyles = makeStyles(theme => ({
 //   root: {
@@ -125,7 +126,9 @@ function App() {
             ) : (
               // tempState + " " + pressureState
               <div>
-              <TempChart series={[pressureState]} />
+              <TempChart temp={tempState} />
+              <PressureChart pressure={pressureState} />
+
               </div>
             )}
           </div>
