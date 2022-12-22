@@ -52,7 +52,7 @@ plotOptions: {
       },
       value: {
         formatter: function(val) {
-          return val*15/100;
+          return val*15/100 + " bar";
         },
         color: '#111',
         fontSize: '36px',
@@ -81,7 +81,7 @@ stroke: {
 
 function PressureChart({pressure}) {
   return(
-    <ReactApexChart options={{...options, labels:['Temperature']}} series={[pressure/15*100]} type="radialBar" height={350}/>
+    <ReactApexChart options={{...options, labels:['Pressure']}} series={[pressure/15*100]} type="radialBar" height={350}/>
   )
 }
 

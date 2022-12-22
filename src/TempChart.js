@@ -52,7 +52,7 @@ plotOptions: {
       },
       value: {
         formatter: function(val) {
-          return val*130/100;
+          return val*130/100 + " ºC";
         },
         color: '#111',
         fontSize: '36px',
