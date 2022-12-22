@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Container from '@mui/material/Container'
-import ReactApexChart from 'react-apexcharts'
 import './App.css';
 import {
   connectToBluetoothDevice,
@@ -10,87 +9,7 @@ import {
   disconnectFromBluetoothDevice,
   startNotificationsPressure
 } from './bluetooth'
-
-var options = {
-  chart: {
-  height: 350,
-  type: 'radialBar',
-  toolbar: {
-    show: true
-  }
-},
-plotOptions: {
-  radialBar: {
-    startAngle: -135,
-    endAngle: 225,
-     hollow: {
-      margin: 0,
-      size: '70%',
-      background: '#fff',
-      image: undefined,
-      imageOffsetX: 0,
-      imageOffsetY: 0,
-      position: 'front',
-      dropShadow: {
-        enabled: true,
-        top: 3,
-        left: 0,
-        blur: 4,
-        opacity: 0.24
-      }
-    },
-    track: {
-      background: '#fff',
-      strokeWidth: '67%',
-      margin: 0, // margin is in pixels
-      dropShadow: {
-        enabled: true,
-        top: -3,
-        left: 0,
-        blur: 4,
-        opacity: 0.35
-      }
-    },
-
-    dataLabels: {
-      show: true,
-      name: {
-        offsetY: -10,
-        show: true,
-        color: '#888',
-        fontSize: '17px'
-      },
-      value: {
-        formatter: function(val) {
-          return val;
-        },
-        color: '#111',
-        fontSize: '36px',
-        show: true,
-      }
-    }
-  }
-},
-fill: {
-  type: 'gradient',
-  gradient: {
-    shade: 'dark',
-    type: 'horizontal',
-    shadeIntensity: 0.5,
-    gradientToColors: ['#ABE5A1'],
-    inverseColors: true,
-    opacityFrom: 1,
-    opacityTo: 1,
-    stops: [0, 100]
-  }
-},
-stroke: {
-  lineCap: 'round'
-},
-};
-
-
-
+import TempChart from 'TempChart.js'
 
 // const useStyles = makeStyles(theme => ({
 //   root: {
@@ -206,8 +125,7 @@ function App() {
             ) : (
               // tempState + " " + pressureState
               <div>
-              <ReactApexChart options={{...options, labels:['Temperature']}} series={[tempState]}  type="radialBar" height={350}/>
-              <ReactApexChart options={{...options, labels:['Pressure']}} series={[pressureState]}  type="radialBar" height={350} />
+              <TempChart series={[pressureState]} />
               </div>
             )}
           </div>
