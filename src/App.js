@@ -7,7 +7,8 @@ import {
   connectToBluetoothDevice,
   startNotifications,
   disconnectFromBluetoothDevice,
-  startNotificationsPressure
+  startNotificationsPressure,
+  startNotificationsBrew
 } from './bluetooth'
 import TempChart from './TempChart.js'
 import PressureChart from './PressureChart';
@@ -32,7 +33,7 @@ function App() {
   const [isBrewing, setIsBrewing] = useState(false)
   const [time, setTime] = useState([0, 0])
   const [demo, setDemo] = useState(false)
-
+  const [characteristicBrew, setCharacteristicBrew] = useState(undefined)
   const toggleBrew = () => {
     if (!isBrewing) {
       setTime([new Date().getTime(), new Date().getTime()])
@@ -41,6 +42,13 @@ function App() {
     }
     setIsBrewing(is => !is)
 
+    characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => {
+      console.log('> Characteristic User Description changed to: ' + Uint8Array.of(1));
+    })
+    .catch(error => {
+      console.log('Argh! ' + error);
+    })
+        setTimeout(() => characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => console.log("change back")), 5000)
   }
   useEffect(() => {
     const interval = setInterval(() => {
@@ -90,6 +98,12 @@ function App() {
         // }
       })
 
+
+      setCharacteristicBrew(await startNotificationsBrew(server).catch(e => console.log(e)))
+      characteristicBrew.addEventListener('characteristicvaluechanged', event => {
+        console.log("relay to" + event.target.value.getInt8(0) )
+      })
+
       const characteristicPressure = await startNotificationsPressure(server).catch(e => console.log(e))
       characteristicPressure.addEventListener('characteristicvaluechanged', event => {
         const { value } = event.target
@@ -97,7 +111,7 @@ function App() {
         for (var i = 0; i < value.byteLength; i++) {
           pressure += String.fromCharCode(value.getInt8(i))
         }
-
+        
         // if ([...yPressureValue].length > 201) {
         //   console.log("HIT")
         //   // setYPressureValue(sp => (sp.shift()))

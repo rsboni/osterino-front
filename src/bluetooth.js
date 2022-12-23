@@ -1,6 +1,7 @@
 const SERVICE_UUID = 0x1A02;
 const TEMP_UUID = 0x1A01;
 const CHARACTERISTIC_UUID = 0x1A02;
+const BREW_UUID = 0x1A03
 
 export const isWebBluetoothSupported = "bluetooth" in navigator;
 
@@ -43,6 +44,20 @@ export const startNotificationsPressure = async (server) => {
     const service = await server.getPrimaryService(SERVICE_UUID);
     window.mservice = service;
     const characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+    window.mcharacteristic = characteristic;
+    await characteristic.startNotifications();
+    return characteristic;
+  } catch (error) {
+    console.log(error)
+    return error;
+  }
+};
+
+export const startNotificationsBrew = async (server) => {
+  try {
+    const service = await server.getPrimaryService(SERVICE_UUID);
+    window.mservice = service;
+    const characteristic = await service.getCharacteristic(BREW_UUID);
     window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
     return characteristic;
