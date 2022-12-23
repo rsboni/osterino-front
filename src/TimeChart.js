@@ -4,20 +4,11 @@ import ReactApexChart from 'react-apexcharts'
 var options = {
   chart: {
   height: 350,
-  width: "50%",
   type: 'radialBar',
   toolbar: {
     show: false
   }
 },
-responsive: [
-  {
-    breakpoint: 1000,
-    options: {
-      width: "100%"
-    }
-  }
-],
 plotOptions: {
   radialBar: {
     startAngle: -135,
@@ -61,7 +52,7 @@ plotOptions: {
       },
       value: {
         formatter: function(val) {
-          return (val*15/100).toFixed(2) + " bar";
+          return (val*60/100).toFixed(0) + " s";
         },
         color: '#111',
         fontSize: '36px',
@@ -76,9 +67,8 @@ fill: {
     shade: 'dark',
     type: 'horizontal',
     shadeIntensity: 0.5,
-    gradienteFromColors: ['#2d8a16'],
-    gradientToColors: ['#cf2539'],
-    inverseColors: false,
+    gradientToColors: ['#ABE5A1'],
+    inverseColors: true,
     opacityFrom: 1,
     opacityTo: 1,
     stops: [0, 100]
@@ -89,10 +79,10 @@ stroke: {
 },
 };
 
-function PressureChart({pressure}) {
+function TimeChart({time}) {
   return(
-    <ReactApexChart options={{...options, labels:['Pressure']}} series={[pressure/15*100]} type="radialBar" height={350}/>
+    <ReactApexChart options={{...options, labels:['Time']}} series={[time/60*100]} type="radialBar" height={350}/>
   )
 }
 
-export default PressureChart
+export default TimeChart
