@@ -12,7 +12,7 @@ import {
 import TempChart from './TempChart.js'
 import PressureChart from './PressureChart';
 import Chart from 'react-apexcharts';
-import { makeStyles } from '@mui/material/styles'
+// import { makeStyles } from '@mui/material/styles'
 import Grid from "@mui/material/Grid"
 import { Typography } from '@mui/material';
 import TimeChart from './TimeChart';
@@ -31,17 +31,18 @@ function App() {
   const [yTempValue, setYTempValue] = useState([])
   const [isBrewing, setIsBrewing] = useState(false)
   const [time, setTime] = useState([0, 0])
+  const [demo, setDemo] = useState(false)
+
   const toggleBrew = () => {
     if (!isBrewing) setTime([new Date().getTime(), new Date().getTime()])
     setIsBrewing(!isBrewing)
-
   }
   useEffect(() => {
     const interval = setInterval(() => {
       let t = [...time]
       t[1] = new Date().getTime()
       if (isBrewing) setTime(t);
-      if(!device){
+      if(demo){
         const newTemp = (Math.random() * 20) + 90
         const newPressure = (Math.random()*4) + 9
         setYTempValue(sp => ([...sp, (newTemp).toFixed(2)]));
@@ -52,7 +53,7 @@ function App() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [time]);
+  }, [time, device, isBrewing, demo]);
 
   const onClick = async () => {
     try {
@@ -241,7 +242,7 @@ function App() {
           </Grid>
 
           <Grid container spacing={2} >
-            <Grid item xs={12} sm={6} md={6} lg={6}>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
               {device ? (
                 <Button
                   variant='contained'
@@ -265,7 +266,22 @@ function App() {
                 </Button>
               )}
             </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={6}>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              {!device ? (
+                <Button
+                  variant='contained'
+                  size='large'
+                  className='button'
+                  color='secondary'
+                  onClick={() => setDemo(!demo)}
+                  spacing={2}
+                >
+                  {!demo? "DEMO": "STOP DEMO"}
+                </Button>
+              ) : (""
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
               <Button
                 variant='contained'
                 size='large'
