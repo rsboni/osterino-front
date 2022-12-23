@@ -38,23 +38,22 @@ function App() {
     setIsBrewing(!isBrewing)
     
   }
-  useEffect(() => {
-    const interval = setInterval(() => {
-      let t = [...time]
-      t[1] = new Date().getTime()
-      if (isBrewing) setTime(t);
-      // if(demo){
-      //   const newTemp = (Math.random() * 20) + 90
-      //   const newPressure = (Math.random()*4) + 9
-      //   setYTempValue(sp => ([...sp, (newTemp).toFixed(2)]));
-      //   setTempState((newTemp).toFixed(2))
-      //   setYPressureValue(sp => ([...sp, (newPressure).toFixed(2)]));
-      //   setPressureState((newPressure).toFixed(2))
-      // }
-    }, 1000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     let t = [...time]
+  //     t[1] = new Date().getTime()
+  //     if (isBrewing) setTime(t);
+  //     // if(demo){
+  //     //   const newTemp = (Math.random() * 20) + 90
+  //     //   const newPressure = (Math.random()*4) + 9
+  //     //   setYTempValue(sp => ([...sp, (newTemp).toFixed(2)]));
+  //     //   setTempState((newTemp).toFixed(2))
+  //     //   setYPressureValue(sp => ([...sp, (newPressure).toFixed(2)]));
+  //     //   setPressureState((newPressure).toFixed(2))
+  //     // }
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [time,isBrewing]);
+  //   ß
 
   const onClick = async () => {
     try {
@@ -70,16 +69,14 @@ function App() {
         if (yTempValue.length === 201) {
           setYTempValue(sp => (sp.slice(1)))
         }
-        let t = [...time]
-        t[1] = new Date().getTime()
-        setTime(t);
+
         setYTempValue(sp => ([...sp, (tempState1 / 100).toFixed(2)]));
         setTempState((tempState1 / 100).toFixed(2))
-        // if(isBrewing){
-        //   let t = [...time]
-        //   t[1] = new Date().getTime()
-        //   setTime(t);
-        // }
+        if(isBrewing){
+          let t = [...time]
+          t[1] = new Date().getTime()
+          setTime(t);
+        }
       })
 
       const characteristicPressure = await startNotificationsPressure(server).catch(e => console.log(e))
@@ -308,4 +305,4 @@ function App() {
 }
 
 
-export default App;
+export default React.Memo(App);
