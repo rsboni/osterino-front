@@ -36,24 +36,25 @@ function App() {
   const toggleBrew = () => {
     if (!isBrewing) setTime([new Date().getTime(), new Date().getTime()])
     setIsBrewing(!isBrewing)
+    
   }
   useEffect(() => {
     const interval = setInterval(() => {
       let t = [...time]
       t[1] = new Date().getTime()
       if (isBrewing) setTime(t);
-      if(demo){
-        const newTemp = (Math.random() * 20) + 90
-        const newPressure = (Math.random()*4) + 9
-        setYTempValue(sp => ([...sp, (newTemp).toFixed(2)]));
-        setTempState((newTemp).toFixed(2))
-        setYPressureValue(sp => ([...sp, (newPressure).toFixed(2)]));
-        setPressureState((newPressure).toFixed(2))
-      }
+      // if(demo){
+      //   const newTemp = (Math.random() * 20) + 90
+      //   const newPressure = (Math.random()*4) + 9
+      //   setYTempValue(sp => ([...sp, (newTemp).toFixed(2)]));
+      //   setTempState((newTemp).toFixed(2))
+      //   setYPressureValue(sp => ([...sp, (newPressure).toFixed(2)]));
+      //   setPressureState((newPressure).toFixed(2))
+      // }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [time, device, isBrewing, demo]);
+  }, [time,isBrewing]);
 
   const onClick = async () => {
     try {
@@ -66,13 +67,19 @@ function App() {
         for (var i = 0; i < 4; i++) {
           tempState1 += String.fromCharCode(value.getInt8(i))
         }
-        if (yTempValue.length === 401) {
+        if (yTempValue.length === 201) {
           setYTempValue(sp => (sp.slice(1)))
         }
-
+        let t = [...time]
+        t[1] = new Date().getTime()
+        setTime(t);
         setYTempValue(sp => ([...sp, (tempState1 / 100).toFixed(2)]));
         setTempState((tempState1 / 100).toFixed(2))
-
+        // if(isBrewing){
+        //   let t = [...time]
+        //   t[1] = new Date().getTime()
+        //   setTime(t);
+        // }
       })
 
       const characteristicPressure = await startNotificationsPressure(server).catch(e => console.log(e))
@@ -83,7 +90,7 @@ function App() {
           pressure += String.fromCharCode(value.getInt8(i))
         }
 
-        if (yPressureValue.length === 401) {
+        if (yPressureValue.length === 201) {
           setYPressureValue(sp => (sp.slice(1)))
         }
         setYPressureValue(sp => ([...sp, (pressure / 100).toFixed(2)]));
@@ -110,14 +117,14 @@ function App() {
   }
 
   return (
-    <div className='App'>
+    <div className='App' style={{backgroundColor: '#1B213B', padding: 0, margin: 0, height: "100%" }} >
       <Paper
         style={{
           padding: 10,
           margin: 10,
           minHeight: '90vh',
           height: '100%',
-          backgroundColor: '#fafafa'
+          // backgroundColor: '#1B213B'
         }}
       >
         <Container>
