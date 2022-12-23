@@ -27,8 +27,8 @@ function App() {
     9
   )
   const [device, setDevice] = useState(undefined)
-  const [yPressureValue, setYPressureValue] = useState([])
-  const [yTempValue, setYTempValue] = useState([])
+  const [yPressureValue, setYPressureValue] = useState([0])
+  const [yTempValue, setYTempValue] = useState([0])
   const [isBrewing, setIsBrewing] = useState(false)
   const [time, setTime] = useState([0, 0])
   const [demo, setDemo] = useState(false)
@@ -38,22 +38,23 @@ function App() {
     setIsBrewing(!isBrewing)
     
   }
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     let t = [...time]
-  //     t[1] = new Date().getTime()
-  //     if (isBrewing) setTime(t);
-  //     // if(demo){
-  //     //   const newTemp = (Math.random() * 20) + 90
-  //     //   const newPressure = (Math.random()*4) + 9
-  //     //   setYTempValue(sp => ([...sp, (newTemp).toFixed(2)]));
-  //     //   setTempState((newTemp).toFixed(2))
-  //     //   setYPressureValue(sp => ([...sp, (newPressure).toFixed(2)]));
-  //     //   setPressureState((newPressure).toFixed(2))
-  //     // }
-  //   }, 1000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      let t = [...time]
+      t[1] = new Date().getTime()
+      if (isBrewing) setTime(t);
+      // if(demo){
+      //   const newTemp = (Math.random() * 20) + 90
+      //   const newPressure = (Math.random()*4) + 9
+      //   setYTempValue(sp => ([...sp, (newTemp).toFixed(2)]));
+      //   setTempState((newTemp).toFixed(2))
+      //   setYPressureValue(sp => ([...sp, (newPressure).toFixed(2)]));
+      //   setPressureState((newPressure).toFixed(2))
+      // }
+    }, 1000);
 
-  //   ß
+    return () => clearInterval(interval);
+  }, [time,isBrewing]);
 
   const onClick = async () => {
     try {
@@ -66,17 +67,17 @@ function App() {
         for (var i = 0; i < 4; i++) {
           tempState1 += String.fromCharCode(value.getInt8(i))
         }
-        if (yTempValue.length === 201) {
-          setYTempValue(sp => (sp.slice(1)))
-        }
+        // if (yTempValue.length > 200) {
+        //   setYTempValue(sp => (sp.shift()))
+        // }
 
         setYTempValue(sp => ([...sp, (tempState1 / 100).toFixed(2)]));
         setTempState((tempState1 / 100).toFixed(2))
-        if(isBrewing){
-          let t = [...time]
-          t[1] = new Date().getTime()
-          setTime(t);
-        }
+        // if(isBrewing){
+        //   let t = [...time]
+        //   t[1] = new Date().getTime()
+        //   setTime(t);
+        // }
       })
 
       const characteristicPressure = await startNotificationsPressure(server).catch(e => console.log(e))
@@ -87,9 +88,11 @@ function App() {
           pressure += String.fromCharCode(value.getInt8(i))
         }
 
-        if (yPressureValue.length === 201) {
-          setYPressureValue(sp => (sp.slice(1)))
-        }
+        // if ([...yPressureValue].length > 201) {
+        //   console.log("HIT")
+        //   // setYPressureValue(sp => (sp.shift()))
+        //   setYPressureValue(sp => ([...sp.slice(1), (pressure / 100).toFixed(2)]));
+        // }
         setYPressureValue(sp => ([...sp, (pressure / 100).toFixed(2)]));
         setPressureState((pressure / 100).toFixed(2))
       })
@@ -115,6 +118,9 @@ function App() {
 
   return (
     <div className='App' style={{backgroundColor: '#1B213B', padding: 0, margin: 0, height: "100%" }} >
+      <>{yTempValue.length > 200 ? setYTempValue(s => s.slice(1)) : ''}</>
+      <>{yPressureValue.length > 200 ? setYPressureValue(s => s.slice(1)) : ''}</>
+
       <Paper
         style={{
           padding: 10,
@@ -304,5 +310,6 @@ function App() {
   )
 }
 
+App = React.memo(App)
 
-export default React.Memo(App);
+export default App;
