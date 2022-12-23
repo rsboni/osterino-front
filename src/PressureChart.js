@@ -57,14 +57,14 @@ plotOptions: {
         offsetY: -10,
         show: true,
         color: '#888',
-        fontSize: '17px'
+        fontSize: '10pt'
       },
       value: {
         formatter: function(val) {
           return (val*15/100).toFixed(2) + " bar";
         },
         color: '#111',
-        fontSize: '36px',
+        fontSize: '22pt',
         show: true,
       }
     }
@@ -91,7 +91,7 @@ stroke: {
 
 function PressureChart({pressure}) {
   return(
-    <ReactApexChart options={{...options, labels:['Pressure']}} series={[pressure/15*100]} type="radialBar" height={350}/>
+    <ReactApexChart options={{...options, labels:['Pressure']}} series={[pressure/15*100]} type="radialBar"/>
   )
 }
 

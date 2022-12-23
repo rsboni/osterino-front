@@ -48,14 +48,14 @@ plotOptions: {
         offsetY: -10,
         show: true,
         color: '#888',
-        fontSize: '17px'
+        fontSize: '10pt'
       },
       value: {
         formatter: function(val) {
           return (val*130/100).toFixed(2) + " ºC";
         },
         color: '#111',
-        fontSize: '36px',
+        fontSize: '22pt',
         show: true,
       }
     }
@@ -81,7 +81,7 @@ stroke: {
 
 function TempChart({temp}) {
   return(
-    <ReactApexChart options={{...options, labels:['Temperature']}} series={[temp/130*100]} type="radialBar" height={350}/>
+    <ReactApexChart options={{...options, labels:['Temperature']}} series={[temp/130*100]} type="radialBar" />
   )
 }
 
