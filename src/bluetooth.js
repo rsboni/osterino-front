@@ -67,6 +67,21 @@ export const startNotificationsBrew = async (server) => {
   }
 };
 
+// export const writeBrew = async(server) => {
+//   try {
+//     const service = await server.getPrimaryService(SERVICE_UUID);
+//     window.mservice = service;
+//     const characteristic = await service.getCharacteristic(BREW_UUID);
+//     window.mcharacteristic = characteristic;
+//     await characteristic.startNotifications();
+//     await characteristic.wr
+//     return characteristic;
+//   } catch (error) {
+//     console.log(error)
+//     return error;
+//   }
+// }
+
 export const disconnectFromBluetoothDevice = (device) => {
   if (!device || !device.gatt.connected) return Promise.resolve();
   return device.gatt.disconnect();

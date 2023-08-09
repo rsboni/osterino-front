@@ -42,25 +42,34 @@ function App() {
       // setTime([new Date().getTime(), new Date().getTime()])
       setYPressureValue([[0, pressureState]])
       setYTempValue([[0, tempState]])
+      if (device) {
+        characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => { })
+          .catch(error => {
+            console.log('Argh! ' + error);
+          })
+      }
+      else {
+        console.log("stopped")
+        if (device) {
+          characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => { })
+            .catch(error => {
+              console.log('Argh! ' + error);
+            })
+        }
+      }
+      setIsBrewing(is => !is)
     }
-    setIsBrewing(is => !is)
-
-
-    // characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => {
-    //   console.log('> Characteristic User Description changed to: ' + Uint8Array.of(1));
-    // })
-    // .catch(error => {
-    //   console.log('Argh! ' + error);
-    // })
-        // setTimeout(() => characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => console.log("change back")), 5000)
   }
+
+  // setTimeout(() => characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => console.log("change back")), 5000)
+
   useEffect(() => {
     const interval = setInterval(() => {
       // let t = [...time]
       const t = ((new Date().getTime() - startTime) / 1000)
-      if (isBrewing) { 
+      if (isBrewing) {
         // setTime(t);
-        setYPressureValue(sp => [ ...sp, [t, pressureState]]);
+        setYPressureValue(sp => [...sp, [t, pressureState]]);
         setYTempValue(sp => [...sp, [t, tempState]]);
       }
 
@@ -105,7 +114,7 @@ function App() {
 
       setCharacteristicBrew(await startNotificationsBrew(server).catch(e => console.log(e)))
       characteristicBrew.addEventListener('characteristicvaluechanged', event => {
-        console.log("relay to" + event.target.value.getInt8(0) )
+        console.log("relay to" + event.target.value.getInt8(0))
       })
 
       const characteristicPressure = await startNotificationsPressure(server).catch(e => console.log(e))
@@ -115,7 +124,7 @@ function App() {
         for (var i = 0; i < value.byteLength; i++) {
           pressure += String.fromCharCode(value.getInt8(i))
         }
-        
+
         // if ([...yPressureValue].length > 201) {
         //   console.log("HIT")
         //   // setYPressureValue(sp => (sp.shift()))
@@ -149,7 +158,7 @@ function App() {
   }
 
   return (
-    <div className='App' style={{backgroundColor: '#1B213B', padding: 0, margin: 0, height: "100%" }} >
+    <div className='App' style={{ backgroundColor: '#1B213B', padding: 0, margin: 0, height: "100%" }} >
       {/* <>{yTempValue.length > 41 ? setYTempValue(s => [ ...s.slice(-1)]) : ''}</>
       <>{yPressureValue.length > 41 ? setYPressureValue(s => [...s.slice(-1)]) : ''}</> */}
 
@@ -280,7 +289,7 @@ function App() {
               <PressureChart pressure={pressureState} />
             </Grid>
             <Grid item xs={12} sm={4} md={4} lg={4}>
-              <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime)/1000) : yPressureValue[yPressureValue.length-1][0]} max={Math.floor((new Date().getTime() - startTime)/1000) > 60 ?  Math.floor((new Date().getTime() - startTime)/1000) : 60} />
+              <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : yPressureValue[yPressureValue.length - 1][0]} max={Math.floor((new Date().getTime() - startTime) / 1000) > 60 ? Math.floor((new Date().getTime() - startTime) / 1000) : 60} />
             </Grid>
           </Grid>
 
@@ -319,7 +328,7 @@ function App() {
                   onClick={() => setDemo(!demo)}
                   spacing={2}
                 >
-                  {!demo? "DEMO": "STOP DEMO"}
+                  {!demo ? "DEMO" : "STOP DEMO"}
                 </Button>
               ) : (""
               )}
