@@ -90,7 +90,7 @@ function App() {
         // if (yTempValue[0] == 10 ){
         //   setYTempValue([...Array(40).fill((tempState1 / 100).toFixed(2))])
         // }
-        setTempState((tempstate1 >1000 ? tempState1 / 10 : tempState1 / 100).toFixed(2))
+        setTempState((tempState1 > 1000 ? tempState1 / 10 : tempState1 / 100).toFixed(2))
         // if(isBrewing){
         //   let t = [...time]
         //   t[1] = new Date().getTime()
