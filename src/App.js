@@ -48,17 +48,18 @@ function App() {
             console.log('Argh! ' + error);
           })
       }
-      else {
-        console.log("stopped")
-        if (device) {
-          characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => { })
-            .catch(error => {
-              console.log('Argh! ' + error);
-            })
-        }
-      }
-      setIsBrewing(is => !is)
     }
+    else {
+      console.log("stopped")
+      if (device) {
+        characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => { })
+          .catch(error => {
+            console.log('Argh! ' + error);
+          })
+      }
+
+    }
+    setIsBrewing(is => !is)
   }
 
   // setTimeout(() => characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => console.log("change back")), 5000)
