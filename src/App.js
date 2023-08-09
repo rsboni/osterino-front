@@ -220,7 +220,7 @@ function App() {
                     },
                     xaxis: {
                       type: 'numeric',
-                      range: yTempValue.length > 200 ? 200 : yTempValue.length ,
+                      range: yTempValue.length > 200 ? 200 : yTempValue.length + 40,
                     },
                     yaxis: [
                       {
