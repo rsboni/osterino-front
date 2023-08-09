@@ -79,9 +79,9 @@ stroke: {
 },
 };
 
-function TimeChart({time}) {
+function TimeChart({time, max}) {
   return(
-    <ReactApexChart options={{...options, labels:['Time']}} series={[time/60*100]} type="radialBar" />
+    <ReactApexChart options={{...options, labels:['Time']}} series={[time/max*100]} type="radialBar" />
   )
 }
 
