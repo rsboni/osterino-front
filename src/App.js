@@ -58,8 +58,8 @@ function App() {
       t[1] = new Date().getTime()
       if (isBrewing) { 
         setTime(t);
-        setYPressureValue(sp => (sp.length > 200 ? [ ...sp.slice(1), [((time[1] - time[0]) % (1000 * 60)) / 1000, pressureState]] : [...sp, ]));
-        setYTempValue(sp => (sp.length > 200 ? [ ...sp.slice(1), [((time[1] - time[0]) % (1000 * 60)) / 1000, tempState]]: [...sp, [((time[1] - time[0]) % (1000 * 60)) / 1000, tempState]]));
+        setYPressureValue(sp => [ ...sp, [((time[1] - time[0]) % (1000 * 60)) / 1000, pressureState]]);
+        setYTempValue(sp => [...sp, [((time[1] - time[0]) % (1000 * 60)) / 1000, tempState]]);
       }
 
       // if(demo){
@@ -92,7 +92,7 @@ function App() {
         // if (yTempValue[0] == 10 ){
         //   setYTempValue([...Array(40).fill((tempState1 / 100).toFixed(2))])
         // }
-        setTempState(tempState1 > 1000 ? (tempState1 / 100).toFixed(1) : (tempState1 / 100).toFixed(2))
+        setTempState((tempState1 / 100).toFixed(2))
         // if(isBrewing){
         //   let t = [...time]
         //   t[1] = new Date().getTime()
@@ -192,6 +192,7 @@ function App() {
                   {
                     chart: {
                       id: 'realtime',
+                      offsetX: 40,
                       height: 350,
                       type: 'line',
                       animations: {
@@ -222,7 +223,7 @@ function App() {
                     },
                     xaxis: {
                       type: 'numeric',
-                      range: yTempValue.length > 200 ? 200 : yTempValue.length + 40,
+                      range: yTempValue.length,
                     },
                     yaxis: [
                       {
