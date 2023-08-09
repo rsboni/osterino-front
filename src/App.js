@@ -163,7 +163,7 @@ function App() {
         <Container>
           <Typography
             align='center'
-            variant='h4'>Osterino Bluetooth</Typography>
+            variant='h4'>Minibar BLE controller</Typography>
 
           {/* <div className={classes.root}>
         <AppBar position='static'>
