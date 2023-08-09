@@ -28,17 +28,19 @@ function App() {
     9
   )
   const [device, setDevice] = useState(undefined)
-  const [yPressureValue, setYPressureValue] = useState([...new Array(2).fill(0.1)])
-  const [yTempValue, setYTempValue] = useState([...new Array(2).fill(10), ...new Array(2).fill(101)])
+  const [yPressureValue, setYPressureValue] = useState([[0, 0.1], [1, 9]])
+  const [yTempValue, setYTempValue] = useState([[0, 70], [1, 101]])
   const [isBrewing, setIsBrewing] = useState(false)
   const [time, setTime] = useState([0, 0])
+  const [startTime, setStartTime] = useState(0)
   const [demo, setDemo] = useState(false)
   const [characteristicBrew, setCharacteristicBrew] = useState(undefined)
   const toggleBrew = () => {
     if (!isBrewing) {
+      setStartTime(new Date().getTime())
       setTime([new Date().getTime(), new Date().getTime()])
-      setYPressureValue([...Array(2).fill(pressureState)])
-      setYTempValue([...Array(2).fill(tempState)])
+      setYPressureValue([[0, pressureState]])
+      setYTempValue([[0, tempState]])
     }
     setIsBrewing(is => !is)
 
@@ -56,8 +58,8 @@ function App() {
       t[1] = new Date().getTime()
       if (isBrewing) { 
         setTime(t);
-        setYPressureValue(sp => (sp.length > 200 ? [ pressureState, ...sp.slice(0,-1)] : [...sp, pressureState]));
-        setYTempValue(sp => (sp.length > 200 ? [ tempState, ...sp.slice(0,-1)]: [...sp, tempState]));
+        setYPressureValue(sp => (sp.length > 200 ? [ ...sp.slice(1), [((time[1] - time[0]) % (1000 * 60)) / 1000, pressureState]] : [...sp, ]));
+        setYTempValue(sp => (sp.length > 200 ? [ ...sp.slice(1), [((time[1] - time[0]) % (1000 * 60)) / 1000, tempState]]: [...sp, [((time[1] - time[0]) % (1000 * 60)) / 1000, tempState]]));
       }
 
       // if(demo){
@@ -81,7 +83,7 @@ function App() {
       characteristic.addEventListener('characteristicvaluechanged', event => {
         const { value } = event.target
         var tempState1 = ''
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < value.byteLength; i++) {
           tempState1 += String.fromCharCode(value.getInt8(i))
         }
         // if (yTempValue.length > 200) {
