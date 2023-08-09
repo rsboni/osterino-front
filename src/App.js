@@ -28,8 +28,8 @@ function App() {
     9
   )
   const [device, setDevice] = useState(undefined)
-  const [yPressureValue, setYPressureValue] = useState([...new Array(40).fill(0.1)])
-  const [yTempValue, setYTempValue] = useState([...new Array(40).fill(10)])
+  const [yPressureValue, setYPressureValue] = useState([...new Array(2).fill(0.1)])
+  const [yTempValue, setYTempValue] = useState([...new Array(2).fill(10), ...new Array(2).fill(101)])
   const [isBrewing, setIsBrewing] = useState(false)
   const [time, setTime] = useState([0, 0])
   const [demo, setDemo] = useState(false)
@@ -37,8 +37,8 @@ function App() {
   const toggleBrew = () => {
     if (!isBrewing) {
       setTime([new Date().getTime(), new Date().getTime()])
-      setYPressureValue([...Array(40).fill(pressureState)])
-      setYTempValue([...Array(40).fill(tempState)])
+      setYPressureValue([...Array(2).fill(pressureState)])
+      setYTempValue([...Array(2).fill(tempState)])
     }
     setIsBrewing(is => !is)
 
@@ -56,8 +56,8 @@ function App() {
       t[1] = new Date().getTime()
       if (isBrewing) { 
         setTime(t);
-        setYPressureValue(sp => (sp.length > 200 ? [ pressureState, ...sp.slice(0,-1)] : [pressureState, ...sp]));
-        setYTempValue(sp => (sp.length > 200 ? [ tempState, ...sp.slice(0,-1)]: [ tempState, ...sp]));
+        setYPressureValue(sp => (sp.length > 200 ? [ pressureState, ...sp.slice(0,-1)] : [...sp, pressureState]));
+        setYTempValue(sp => (sp.length > 200 ? [ tempState, ...sp.slice(0,-1)]: [...sp, tempState]));
       }
 
       // if(demo){
@@ -90,7 +90,7 @@ function App() {
         // if (yTempValue[0] == 10 ){
         //   setYTempValue([...Array(40).fill((tempState1 / 100).toFixed(2))])
         // }
-        setTempState((tempState1 / 100).toFixed(2))
+        setTempState((tempstate1 >1000 ? tempState1 / 10 : tempState1 / 100).toFixed(2))
         // if(isBrewing){
         //   let t = [...time]
         //   t[1] = new Date().getTime()
@@ -227,16 +227,16 @@ function App() {
                         title: {
                           text: 'Pressure',
                         },
-                        max: 15,
-                        min: -0.5
+                        max: 10,
+                        min: 0
                       },
                       {
                         opposite: true,
                         title: {
                           text: 'Temperature',
                         },
-                        max: 140,
-                        min: 5
+                        max: 130,
+                        min: 70
                       },
 
                     ],
