@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import Box from '@mui/material/Box';
+import Slider from '@mui/material/Slider';
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Container from '@mui/material/Container'
@@ -8,7 +10,8 @@ import {
   startNotifications,
   disconnectFromBluetoothDevice,
   startNotificationsPressure,
-  startNotificationsBrew
+  startNotificationsBrew,
+  startNotificationsTargetPressure
 } from './bluetooth'
 import TempChart from './TempChart.js'
 import PressureChart from './PressureChart';
@@ -35,6 +38,9 @@ function App() {
   const [startTime, setStartTime] = useState(0)
   const [demo, setDemo] = useState(false)
   const [characteristicBrew, setCharacteristicBrew] = useState(undefined)
+  const [characteristicTargetPressure, setCharacteristicTargetPressure] = useState(undefined)
+  const [targetPressure, setTargetPressure] = useState(9);
+
   const toggleBrew = () => {
     if (!isBrewing) {
       console.log("brewing")
@@ -87,6 +93,23 @@ function App() {
     return () => clearInterval(interval);
   }, [yTempValue]);
 
+  function preventHorizontalKeyboardNavigation(event: React.KeyboardEvent) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+    }
+  }
+
+  const targetPressureChange = async(e) =>{
+      setTargetPressure(e.target.value);
+      console.log("target pressure = " + targetPressure)
+      if (device) {
+        characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure*10)).then(_ => { })
+          .catch(error => {
+            console.log('Argh! ' + error);
+          })
+      }
+  }
+
   const onClick = async () => {
     try {
       const { server, device } = await connectToBluetoothDevice()
@@ -116,6 +139,12 @@ function App() {
       setCharacteristicBrew(await startNotificationsBrew(server).catch(e => console.log(e)))
       characteristicBrew.addEventListener('characteristicvaluechanged', event => {
         console.log("relay to" + event.target.value.getInt8(0))
+      })
+
+
+      setCharacteristicTargetPressure(await startNotificationsTargetPressure(server).catch(e => console.log(e)))
+      characteristicBrew.addEventListener('characteristicvaluechanged', event => {
+        console.log("pressure to" + event.target.value.getInt8(0))
       })
 
       const characteristicPressure = await startNotificationsPressure(server).catch(e => console.log(e))
@@ -198,88 +227,112 @@ function App() {
             container
             spacing={1}
           >
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-              <Chart
-                options={
-                  {
-                    chart: {
-                      id: 'realtime',
-                      offsetX: 0,
-                      height: 350,
-                      type: 'line',
-                      animations: {
-                        enabled: true,
-                        easing: 'linear',
-                        dynamicAnimation: {
-                          speed: 200
+            <Grid container xs={11}>
+
+              <Grid item xs={11} sm={11} md={11} lg={11}>
+                <Chart
+                  options={
+                    {
+                      chart: {
+                        id: 'realtime',
+                        offsetX: 0,
+                        height: 350,
+                        type: 'line',
+                        animations: {
+                          enabled: true,
+                          easing: 'linear',
+                          dynamicAnimation: {
+                            speed: 200
+                          }
+                        },
+                        toolbar: {
+                          show: false
+                        },
+                        zoom: {
+                          enabled: false
                         }
                       },
-                      toolbar: {
+                      dataLabels: {
+                        enabled: false
+                      },
+                      stroke: {
+                        curve: 'smooth'
+                      },
+                      title: {
                         show: false
                       },
-                      zoom: {
-                        enabled: false
+                      markers: {
+                        size: 0
+                      },
+                      xaxis: {
+                        type: 'numeric',
+                        // range: yTempValue.length,
+                      },
+                      yaxis: [
+                        {
+                          title: {
+                            text: 'Pressure',
+                          },
+                          max: 10,
+                          min: 0
+                        },
+                        {
+                          opposite: true,
+                          title: {
+                            text: 'Temperature',
+                          },
+                          max: 130,
+                          min: 70
+                        },
+
+                      ],
+
+                      legend: {
+                        show: true,
+
+                      },
+                      tooltip: {
+                        shared: true,
+                        intersect: false,
                       }
-                    },
-                    dataLabels: {
-                      enabled: false
-                    },
-                    stroke: {
-                      curve: 'smooth'
-                    },
-                    title: {
-                      show: false
-                    },
-                    markers: {
-                      size: 0
-                    },
-                    xaxis: {
-                      type: 'numeric',
-                      // range: yTempValue.length,
-                    },
-                    yaxis: [
-                      {
-                        title: {
-                          text: 'Pressure',
-                        },
-                        max: 10,
-                        min: 0
-                      },
-                      {
-                        opposite: true,
-                        title: {
-                          text: 'Temperature',
-                        },
-                        max: 130,
-                        min: 70
-                      },
-
-                    ],
-
-                    legend: {
-                      show: true,
-
-                    },
-                    tooltip: {
-                      shared: true,
-                      intersect: false,
                     }
                   }
-                }
-                series={[{
-                  name: 'Pressure',
-                  type: 'area',
-                  data: yPressureValue
-                },
-                {
-                  name: 'Temperature',
-                  type: 'line',
-                  data: yTempValue,
-                  color: '#cf2539'
-                }]}
+                  series={[{
+                    name: 'Pressure',
+                    type: 'area',
+                    data: yPressureValue
+                  },
+                  {
+                    name: 'Temperature',
+                    type: 'line',
+                    data: yTempValue,
+                    color: '#cf2539'
+                  }]}
 
-                height="300px"
-              />
+                  height="300px"
+                />
+              </Grid>
+
+              <Grid item xs={1}>
+                <Box sx={{ height: 300 }}>
+                  <Slider
+                    sx={{
+                      '& input[type="range"]': {
+                        WebkitAppearance: 'slider-vertical',
+                      },
+                    }}
+                    orientation="vertical"
+                    defaultValue={9}
+                    onChange={targetPressureChange}
+                    min={0}
+                    step={0.1}
+                    max={10}
+                    aria-label="Temperature"
+                    valueLabelDisplay="auto"
+                    onKeyDown={preventHorizontalKeyboardNavigation}
+                  />
+                </Box>
+              </Grid>
             </Grid>
             <Grid item xs={12} sm={4} md={4} lg={4}>
               <TempChart temp={tempState} />
@@ -292,9 +345,6 @@ function App() {
             <Grid item xs={12} sm={4} md={4} lg={4}>
               <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : yPressureValue[yPressureValue.length - 1][0]} max={Math.floor((new Date().getTime() - startTime) / 1000) > 60 ? Math.floor((new Date().getTime() - startTime) / 1000) : 60} />
             </Grid>
-          </Grid>
-
-          <Grid container spacing={2} >
             <Grid item xs={12} sm={6} md={4} lg={4}>
               {device ? (
                 <Button
@@ -347,8 +397,9 @@ function App() {
               </Button>
             </Grid>
           </Grid>
-        </Container>
-      </Paper>
+
+      </Container>
+    </Paper>
     </div >
   )
 }
