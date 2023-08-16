@@ -12,6 +12,7 @@ import {
 import { Grid, Typography } from '@mui/material'
 import Buttons from './components/Buttons';
 import Dashboard from './components/Dashboard';
+import Profilling from './components/Profilling'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -29,6 +30,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Bluetooth, Coffee, Settings, SsidChart, Water } from '@mui/icons-material';
+import { curveCalculator } from './utils/profileCalculator';
 
 const drawerWidth = 240;
 
@@ -101,12 +103,14 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 function App() {
   const theme = useTheme();
-
+  const defaultCurve = [...curveCalculator(0,2,1,0.5,0), ...curveCalculator(2,2,9,0.5,1),...curveCalculator(2,9,2,0.5,10),...curveCalculator(9,6,40,0.5,12)]
+  const [manualBrew, setManualBrew] = useState(false);
+  const [selectedPage, setSelectedPage] = useState("dashboard")
   const [tempState, setTempState] = useState(96)
   const [pressureState, setPressureState] = useState(9)
   const [device, setDevice] = useState(undefined)
-  const [yPressureValue, setYPressureValue] = useState([[0, 0.1], [1, 9]])
-  const [yTempValue, setYTempValue] = useState([[0, 70], [1, 101]])
+  const [yPressureValue, setYPressureValue] = useState(defaultCurve)
+  const [yTempValue, setYTempValue] = useState([[0, 100], [51.5, 97]])
   const [isBrewing, setIsBrewing] = useState(false)
   const [startTime, setStartTime] = useState(0)
   const [demo, setDemo] = useState(false)
@@ -114,7 +118,6 @@ function App() {
   const [characteristicTargetPressure, setCharacteristicTargetPressure] = useState(undefined)
   const [targetPressure, setTargetPressure] = useState(9);
   const [open, setOpen] = useState(false);
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -154,15 +157,29 @@ function App() {
   }
 
   useEffect(() => {
+    if(isBrewing){
     const interval = setInterval(() => {
       const t = ((new Date().getTime() - startTime) / 1000)
       if (isBrewing) {
         setYPressureValue(sp => [...sp, [t, pressureState]]);
         setYTempValue(sp => [...sp, [t, tempState]]);
       }
+      if(!manualBrew) {
+        for(var i = 0; i> defaultCurve.length; i++){
+          if(defaultCurve[i][0] <= t && defaultCurve[i+1][0] > t){}
+          setTargetPressure(defaultCurve[i][1])
+          if (device) {
+            characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure.toFixed(1) * 10)).then(_ => { })
+              .catch(error => {
+                console.log('Argh! ' + error);
+              })
+          }
+        }
+      }
     }, 100);
     return () => clearInterval(interval);
-  }, [yTempValue]);
+  }
+}, [yTempValue]);
 
 
   const targetPressureChange = async (e) => {
@@ -274,7 +291,7 @@ function App() {
       return e
     }
   }
-
+  console.log(yPressureValue)
   return (
 
 
@@ -314,6 +331,7 @@ function App() {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
+              onClick={() => setSelectedPage("dashboard")}
             >
               <ListItemIcon
                 sx={{
@@ -354,6 +372,8 @@ function App() {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
+              onClick={() => setSelectedPage("profiles")}
+
             >
               <ListItemIcon
                 sx={{
@@ -415,8 +435,12 @@ function App() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Grid container spacing={1}>
-          <Dashboard props={[yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing]} ></Dashboard>
-          <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} ></Buttons>
+          {selectedPage === "dashboard" ? <>
+          <Dashboard props={[yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing]} />
+          <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
+          : selectedPage === "profiles" ? 
+          <Profilling />:
+          ""}
         </Grid>
       </Box>
     </Box>
