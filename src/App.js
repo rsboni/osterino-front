@@ -190,9 +190,9 @@ function App() {
           }
           setTempState((tempState1 / 100).toFixed(2))  
           // setTimeout(() => { }, 100);
-      }).catch(e => console.log(e))
-      console.log("Temperature characteristic added")
       })
+      console.log("Temperature characteristic added")
+      }).catch(e => console.log(e))
 
       setCharacteristicBrew(await startNotificationsBrew()
         .then(characteristicBrew => {
