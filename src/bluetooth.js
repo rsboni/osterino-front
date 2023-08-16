@@ -67,7 +67,7 @@ export const startNotificationsBrew = async () => {
 
     window.mcharacteristic = characteristic;
     console.log("after seting brew window characteristic")
-    await characteristic.startNotifications();
+    // await characteristic.startNotifications();
     console.log("after seting brew start notification")
 
     return characteristic;
