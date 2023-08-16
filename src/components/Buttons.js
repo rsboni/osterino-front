@@ -5,10 +5,11 @@ export default function Buttons({ props }) {
   const [disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo] = props
 
   return (
-    <Grid container>
-      <Grid item xs={12} sm={6} md={4} lg={4}>
+    <Grid container   justifyContent="space-around"   direction="row"   alignItems="center"> 
+      <Grid item xs={12} sm={3}>
         {device ? (
           <Button
+          fullWidth
             variant='contained'
             size='large'
             className='button'
@@ -20,6 +21,7 @@ export default function Buttons({ props }) {
           </Button>
         ) : (
           <Button
+          fullWidth
             variant='contained'
             size='large'
             className='button'
@@ -30,9 +32,10 @@ export default function Buttons({ props }) {
           </Button>
         )}
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={4}>
+      <Grid item xs={12} sm={3} >
         {device ?
           <Button
+            fullWidth
             variant='contained'
             size='large'
             className='button'
@@ -43,6 +46,7 @@ export default function Buttons({ props }) {
             {!isBrewing ? ("BREW") : ("STOP")}
           </Button>
           : <Button
+          fullWidth
           variant='contained'
           size='large'
           className='button'

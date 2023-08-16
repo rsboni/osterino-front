@@ -18,7 +18,7 @@ export default function Dashboard({props}) {
 
   return (
     <Grid container xs={12}>
-      <Grid container xs={11}>
+      <Grid container xs={11}  justifyContent="center"   direction="row"   alignItems="flex-start" spacing={2}>
 
         <Grid item xs={11} sm={11} md={11} lg={11}>
           <Chart
@@ -117,24 +117,25 @@ export default function Dashboard({props}) {
               onChange={targetPressureChange}
               min={0}
               step={0.1}
+              valueLabelDisplay="on"
               max={10}
               aria-label="Temperature"
-              valueLabelDisplay="auto"
+              marks={[{value: 6, label: "6 bar"},{value: 2, label: "2 bar"},{value: 9, label: "9 bar"}]}
               onKeyDown={preventHorizontalKeyboardNavigation}
             />
           </Box>
         </Grid>
       </Grid>
+      <Grid   container xs={11}  justifyContent="center"   direction="row"   alignItems="flex-start" spacing={4}>
       <Grid item xs={12} sm={4} md={4} lg={4}>
         <TempChart temp={tempState} />
-
       </Grid>
       <Grid item xs={12} sm={4} md={4} lg={4}>
-
         <PressureChart pressure={pressureState} />
       </Grid>
       <Grid item xs={12} sm={4} md={4} lg={4}>
         <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : yPressureValue[yPressureValue.length - 1][0]} max={Math.floor((new Date().getTime() - startTime) / 1000) > 60 ? Math.floor((new Date().getTime() - startTime) / 1000) : 60} />
+      </Grid>
       </Grid>
     </Grid>
   )

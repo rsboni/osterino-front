@@ -15,7 +15,7 @@ plotOptions: {
     endAngle: 225,
      hollow: {
       margin: 0,
-      size: '70%',
+      size: '60%',
       background: '#fff',
       image: undefined,
       imageOffsetX: 0,
@@ -48,14 +48,14 @@ plotOptions: {
         offsetY: -10,
         show: true,
         color: '#888',
-        fontSize: '10pt'
+        fontSize: '9pt'
       },
       value: {
         formatter: function(val) {
           return (val*60/100).toFixed(0) + " s";
         },
         color: '#111',
-        fontSize: '22pt',
+        fontSize: '20pt',
         show: true,
       }
     }

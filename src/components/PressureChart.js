@@ -3,8 +3,8 @@ import ReactApexChart from 'react-apexcharts'
 
 var options = {
   chart: {
-  height: 350,
-  width: "50%",
+  height: 300,
+  width: "40%",
   type: 'radialBar',
   toolbar: {
     show: false
@@ -14,7 +14,7 @@ responsive: [
   {
     breakpoint: 1000,
     options: {
-      width: "100%"
+      width: "50%"
     }
   }
 ],
@@ -24,7 +24,7 @@ plotOptions: {
     endAngle: 225,
      hollow: {
       margin: 0,
-      size: '70%',
+      size: '60%',
       background: '#fff',
       image: undefined,
       imageOffsetX: 0,
@@ -57,14 +57,14 @@ plotOptions: {
         offsetY: -10,
         show: true,
         color: '#888',
-        fontSize: '10pt'
+        fontSize: '8pt'
       },
       value: {
         formatter: function(val) {
           return (val*15/100).toFixed(2) + " bar";
         },
         color: '#111',
-        fontSize: '22pt',
+        fontSize: '18pt',
         show: true,
       }
     }
