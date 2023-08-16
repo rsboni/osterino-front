@@ -8,7 +8,7 @@ import Grid from "@mui/material/Grid"
 import TimeChart from './TimeChart';
 
 export default function Dashboard({props}) {
- const [yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing ] = props
+ const [yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure ] = props
 
  function preventHorizontalKeyboardNavigation(event) {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -113,7 +113,8 @@ export default function Dashboard({props}) {
                 },
               }}
               orientation="vertical"
-              defaultValue={9}
+              // defaultValue={9}
+              value={targetPressure}
               onChange={targetPressureChange}
               min={0}
               step={0.1}
