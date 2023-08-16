@@ -25,10 +25,16 @@ export const connectToBluetoothDevice = async () => {
   }
 };
 
-export const startNotifications = async (server) => {
+export const connectToService = async () =>{
+  const server = window.mserver;
+  server.getPrimaryService(SERVICE_UUID);
+  const service = await server.getPrimaryService(SERVICE_UUID);
+  window.mservice = service;
+}
+
+export const startNotificationsTemperature = async () => {
   try {
-    const service = await server.getPrimaryService(SERVICE_UUID);
-    window.mservice = service;
+    const service = window.mservice;
     const characteristic = await service.getCharacteristic(TEMP_UUID);
     window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
@@ -40,10 +46,9 @@ export const startNotifications = async (server) => {
 };
 
 
-export const startNotificationsPressure = async (server) => {
+export const startNotificationsPressure = async () => {
   try {
-    const service = await server.getPrimaryService(SERVICE_UUID);
-    window.mservice = service;
+    const service = window.mservice;
     const characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
     window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
@@ -54,10 +59,9 @@ export const startNotificationsPressure = async (server) => {
   }
 };
 
-export const startNotificationsBrew = async (server) => {
+export const startNotificationsBrew = async () => {
   try {
-    const service = await server.getPrimaryService(SERVICE_UUID);
-    window.mservice = service;
+    const service = window.mservice;
     const characteristic = await service.getCharacteristic(BREW_UUID);
     window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
@@ -68,10 +72,9 @@ export const startNotificationsBrew = async (server) => {
   }
 };
 
-export const startNotificationsTargetPressure = async (server) => {
+export const startNotificationsTargetPressure = async () => {
   try {
-    const service = await server.getPrimaryService(SERVICE_UUID);
-    window.mservice = service;
+    const service = window.mservice;
     const characteristic = await service.getCharacteristic(TARGET_PRESSURE_UUID);
     window.mcharacteristic = characteristic;
     await characteristic.startNotifications();

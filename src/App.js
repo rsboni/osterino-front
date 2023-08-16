@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import './App.css';
 import {
   connectToBluetoothDevice,
-  startNotifications,
+  connectToService,
+  startNotificationsTemperature,
   disconnectFromBluetoothDevice,
   startNotificationsPressure,
   startNotificationsBrew,
@@ -177,9 +178,10 @@ function App() {
 
   const onClick = async () => {
     try {
-      const { server, device } = await connectToBluetoothDevice()
+      const { device } = await connectToBluetoothDevice()
       setDevice(device)
-      startNotifications(server).then(characteristic => {
+      await connectToService();
+      startNotificationsTemperature().then(characteristic => {
         characteristic.addEventListener('characteristicvaluechanged', event => {
           const { value } = event.target
           var tempState1 = ''
@@ -192,7 +194,7 @@ function App() {
       console.log("Temperature characteristic added")
       })
 
-      setCharacteristicBrew(await startNotificationsBrew(server)
+      setCharacteristicBrew(await startNotificationsBrew()
         .then(characteristicBrew => {
           characteristicBrew.addEventListener('characteristicvaluechanged', event => {
             console.log("relay to" + event.target.value.getInt8(0))
@@ -208,7 +210,7 @@ function App() {
       //   console.log("relay to" + event.target.value.getInt8(0))
       // })
 
-      setCharacteristicTargetPressure(await startNotificationsTargetPressure(server).then(
+      setCharacteristicTargetPressure(await startNotificationsTargetPressure().then(
         characteristicTargetPressure => {
           characteristicTargetPressure.addEventListener('characteristicvaluechanged', event => {
             console.log("pressure to" + event.target.value.getInt8(0))
@@ -224,7 +226,7 @@ function App() {
       //   console.log("pressure to" + event.target.value.getInt8(0))
       // })
 
-      await startNotificationsPressure(server).then(
+      await startNotificationsPressure().then(
         characteristicPressure => {
           characteristicPressure.addEventListener('characteristicvaluechanged', event => {
             const { value } = event.target
