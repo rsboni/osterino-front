@@ -167,11 +167,13 @@ function App() {
         if (!manualBrew) {
           for (var i = 0; i < defaultCurve.length; i++) {
             if (defaultCurve[i][0] <= t && defaultCurve[i + 1][0] > t) {
-              setTargetPressure(defaultCurve[i][1])
-              characteristicTargetPressure.writeValue(Uint8Array.of(defaultCurve[i][1] * 10)).then(_ => { })
-                .catch(error => {
-                  console.log('Argh! ' + error);
-                })
+              if(targetPressure !== defaultCurve[i][1]){
+                setTargetPressure(defaultCurve[i][1])
+                characteristicTargetPressure.writeValue(Uint8Array.of(defaultCurve[i][1] * 10)).then(_ => { })
+                  .catch(error => {
+                    console.log('Argh! ' + error);
+                  })
+                }
 
 
             }
