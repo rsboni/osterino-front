@@ -179,17 +179,17 @@ function App() {
     try {
       const { server, device } = await connectToBluetoothDevice()
       setDevice(device)
-      const characteristic = await startNotifications(server).catch(e => console.log(e))
-      setTimeout(() => { }, 100);
-      characteristic.addEventListener('characteristicvaluechanged', event => {
-        const { value } = event.target
-        var tempState1 = ''
-        for (var i = 0; i < value.byteLength; i++) {
-          tempState1 += String.fromCharCode(value.getInt8(i))
-        }
-        setTempState((tempState1 / 100).toFixed(2))
-        console.log("Temperature characteristic added")
-
+      startNotifications(server).then(characteristic => {
+        characteristic.addEventListener('characteristicvaluechanged', event => {
+          const { value } = event.target
+          var tempState1 = ''
+          for (var i = 0; i < value.byteLength; i++) {
+            tempState1 += String.fromCharCode(value.getInt8(i))
+          }
+          setTempState((tempState1 / 100).toFixed(2))  
+          // setTimeout(() => { }, 100);
+      }).catch(e => console.log(e))
+      console.log("Temperature characteristic added")
       })
 
       setCharacteristicBrew(await startNotificationsBrew(server)
