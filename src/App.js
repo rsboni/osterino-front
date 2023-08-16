@@ -200,7 +200,7 @@ function App() {
             console.log("relay to" + event.target.value.getInt8(0))
           })
           console.log("Brew BLE characteristic added")
-
+          return characteristicBrew;
         })
         .catch(e => console.log(e)))
 
@@ -216,6 +216,7 @@ function App() {
             console.log("pressure to" + event.target.value.getInt8(0))
           })
           console.log("Target Pressure BLE characteristic added")
+          return characteristicTargetPressure;
         }
       )
         .catch(e => console.log(e)))
