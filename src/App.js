@@ -8,7 +8,7 @@ import {
   startNotificationsBrew,
   startNotificationsTargetPressure
 } from './bluetooth'
-import { Grid, Typography, Paper, Container } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import Buttons from './components/Buttons';
 import Dashboard from './components/Dashboard';
 import { styled, useTheme } from '@mui/material/styles';
@@ -27,9 +27,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import { Bluetooth, Coffee, CoffeeOutlined, Settings, SsidChart, Water } from '@mui/icons-material';
+import { Bluetooth, Coffee, Settings, SsidChart, Water } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
