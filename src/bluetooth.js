@@ -63,8 +63,13 @@ export const startNotificationsBrew = async () => {
   try {
     const service = window.mservice;
     const characteristic = await service.getCharacteristic(BREW_UUID);
+    console.log("after getting brew characteristic")
+
     window.mcharacteristic = characteristic;
+    console.log("after seting brew window characteristic")
     await characteristic.startNotifications();
+    console.log("after seting brew start notification")
+
     return characteristic;
   } catch (error) {
     console.log(error)
