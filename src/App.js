@@ -165,15 +165,18 @@ function App() {
         setYTempValue(sp => [...sp, [t, tempState]]);
       }
       if(!manualBrew) {
-        for(var i = 0; i> defaultCurve.length; i++){
-          if(defaultCurve[i][0] <= t && defaultCurve[i+1][0] > t){}
-          setTargetPressure(defaultCurve[i][1])
-          if (device) {
-            characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure.toFixed(1) * 10)).then(_ => { })
-              .catch(error => {
-                console.log('Argh! ' + error);
-              })
+        for(var i = 0; i < defaultCurve.length; i++){
+          if(defaultCurve[i][0] <= t && defaultCurve[i+1][0] > t){
+            setTargetPressure(defaultCurve[i][1])
+            if (device) {
+              characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure.toFixed(1) * 10)).then(_ => { })
+                .catch(error => {
+                  console.log('Argh! ' + error);
+                })
+            
           }
+          }
+
         }
       }
     }, 100);
