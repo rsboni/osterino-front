@@ -103,7 +103,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 function App() {
   const theme = useTheme();
-  const defaultCurve = [...curveCalculator(0,2,1,0.5,0), ...curveCalculator(2,2,9,0.5,1),...curveCalculator(2,9,2,0.5,10),...curveCalculator(9,6,40,0.5,12)]
+  const defaultCurve = [...curveCalculator(0, 2, 1, 0.5, 0), ...curveCalculator(2, 2, 9, 0.5, 1), ...curveCalculator(2, 9, 2, 0.5, 10), ...curveCalculator(9, 6, 40, 0.5, 12)]
   const [manualBrew, setManualBrew] = useState(false);
   const [selectedPage, setSelectedPage] = useState("dashboard")
   const [tempState, setTempState] = useState(96)
@@ -157,35 +157,35 @@ function App() {
   }
 
   useEffect(() => {
-    if(isBrewing){
-    const interval = setInterval(() => {
-      const t = ((new Date().getTime() - startTime) / 1000)
-      if (isBrewing) {
-        setYPressureValue(sp => [...sp, [t, pressureState]]);
-        setYTempValue(sp => [...sp, [t, tempState]]);
-      }
-      if(!manualBrew) {
-        for(var i = 0; i < defaultCurve.length; i++){
-          if(defaultCurve[i][0] <= t && defaultCurve[i+1][0] > t){
-            setTargetPressure(defaultCurve[i][1])
-            if (device) {
-              characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure.toFixed(1) * 10)).then(_ => { })
+    if (isBrewing) {
+      const interval = setInterval(() => {
+        const t = ((new Date().getTime() - startTime) / 1000)
+        if (isBrewing) {
+          setYPressureValue(sp => [...sp, [t, pressureState]]);
+          setYTempValue(sp => [...sp, [t, tempState]]);
+        }
+        if (!manualBrew) {
+          for (var i = 0; i < defaultCurve.length; i++) {
+            if (defaultCurve[i][0] <= t && defaultCurve[i + 1][0] > t) {
+              setTargetPressure(defaultCurve[i][1])
+              characteristicTargetPressure.writeValue(Uint8Array.of(defaultCurve[i][1].toFixed(1) * 10)).then(_ => { })
                 .catch(error => {
                   console.log('Argh! ' + error);
                 })
-            
-          }
-          }
 
+
+            }
+
+          }
         }
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }
-}, [yTempValue]);
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [yTempValue]);
 
 
   const targetPressureChange = async (e) => {
+    // setManualBrew(true);
     setTargetPressure(e.target.value);
     console.log("target pressure = " + targetPressure)
     if (device) {
@@ -208,10 +208,10 @@ function App() {
           for (var i = 0; i < value.byteLength; i++) {
             tempState1 += String.fromCharCode(value.getInt8(i))
           }
-          setTempState((tempState1 / 100).toFixed(2))  
+          setTempState((tempState1 / 100).toFixed(2))
           // setTimeout(() => { }, 100);
-      })
-      console.log("Temperature characteristic added")
+        })
+        console.log("Temperature characteristic added")
       }).catch(e => console.log(e))
 
       setCharacteristicBrew(await startNotificationsBrew()
@@ -342,8 +342,8 @@ function App() {
                   mr: open ? 3 : 'auto',
                   justifyContent: 'center',
                 }}
-              > 
-                <Coffee/>
+              >
+                <Coffee />
               </ListItemIcon>
               <ListItemText primary={'Brew'} sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
@@ -393,7 +393,7 @@ function App() {
         </List>
         <Divider />
         <List>
-        <ListItem key={'Settings'} disablePadding sx={{ display: 'block' }}>
+          <ListItem key={'Settings'} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -439,11 +439,11 @@ function App() {
         <DrawerHeader />
         <Grid container spacing={1}>
           {selectedPage === "dashboard" ? <>
-          <Dashboard props={[yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure]} />
-          <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
-          : selectedPage === "profiles" ? 
-          <Profilling />:
-          ""}
+            <Dashboard props={[yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure]} />
+            <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
+            : selectedPage === "profiles" ?
+              <Profilling /> :
+              ""}
         </Grid>
       </Box>
     </Box>
