@@ -3,7 +3,7 @@ const TEMP_UUID = 0x1A01;
 const CHARACTERISTIC_UUID = 0x1A02;
 const BREW_UUID = 0x1A03;
 const TARGET_PRESSURE_UUID = 0x1A04;
-
+const WEIGHT_UUID = 0x1A05;
 export const isWebBluetoothSupported = "bluetooth" in navigator;
 
 export const connectToBluetoothDevice = async () => {
@@ -81,6 +81,19 @@ export const startNotificationsTargetPressure = async () => {
   try {
     const service = window.mservice;
     const characteristic = await service.getCharacteristic(TARGET_PRESSURE_UUID);
+    window.mcharacteristic = characteristic;
+    await characteristic.startNotifications();
+    return characteristic;
+  } catch (error) {
+    console.log(error)
+    return error;
+  }
+};
+
+export const startNotificationsWeight = async () => {
+  try {
+    const service = window.mservice;
+    const characteristic = await service.getCharacteristic(WEIGHT_UUID);
     window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
     return characteristic;

@@ -6,9 +6,11 @@ import PressureChart from './PressureChart';
 import Chart from 'react-apexcharts';
 import Grid from "@mui/material/Grid"
 import TimeChart from './TimeChart';
+import WeightChart from './WeightChart.js';
+
 
 export default function Dashboard({props}) {
- const [yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure ] = props
+ const [yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure, weight ] = props
 
  function preventHorizontalKeyboardNavigation(event) {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -127,15 +129,18 @@ export default function Dashboard({props}) {
           </Box>
         </Grid>
       </Grid>
-      <Grid   container xs={11}  justifyContent="center"   direction="row"   alignItems="flex-start" spacing={4}>
-      <Grid item xs={12} sm={4} md={4} lg={4}>
+      <Grid   container  justifyContent="center"   direction="row"   alignItems="flex-start" spacing={4}>
+      <Grid item xs={12} sm={3} >
         <TempChart temp={tempState} />
       </Grid>
-      <Grid item xs={12} sm={4} md={4} lg={4}>
+      <Grid item xs={12} sm={3} >
         <PressureChart pressure={pressureState} />
       </Grid>
-      <Grid item xs={12} sm={4} md={4} lg={4}>
+      <Grid item xs={12} sm={3} >
         <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : yPressureValue[yPressureValue.length - 1][0]} max={Math.floor((new Date().getTime() - startTime) / 1000) > 60 ? Math.floor((new Date().getTime() - startTime) / 1000) : 60} />
+      </Grid>
+      <Grid item xs={12} sm={3} >
+        <WeightChart weight={weight}/>
       </Grid>
       </Grid>
     </Grid>

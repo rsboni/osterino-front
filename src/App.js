@@ -7,7 +7,8 @@ import {
   disconnectFromBluetoothDevice,
   startNotificationsPressure,
   startNotificationsBrew,
-  startNotificationsTargetPressure
+  startNotificationsTargetPressure,
+  startNotificationsWeight
 } from './bluetooth'
 import { Grid, Typography } from '@mui/material'
 import Buttons from './components/Buttons';
@@ -108,6 +109,7 @@ function App() {
   const [selectedPage, setSelectedPage] = useState("dashboard")
   const [tempState, setTempState] = useState(96)
   const [pressureState, setPressureState] = useState(9)
+  const [weight, setWeight] = useState(0)
   const [device, setDevice] = useState(undefined)
   const [yPressureValue, setYPressureValue] = useState(defaultCurve)
   const [yTempValue, setYTempValue] = useState([[0, 100], [51.5, 97]])
@@ -215,6 +217,21 @@ function App() {
         })
         console.log("Temperature characteristic added")
       }).catch(e => console.log(e))
+
+      startNotificationsWeight().then(characteristic => {
+        characteristic.addEventListener('characteristicvaluechanged', event => {
+          const { value } = event.target
+          var weightState = ''
+          for (var i = 0; i < value.byteLength; i++) {
+            weightState += String.fromCharCode(value.getInt8(i))
+          }
+          setWeight((weightState / 100).toFixed(2))
+          // setTimeout(() => { }, 100);
+        })
+        console.log("Temperature characteristic added")
+      }).catch(e => console.log(e))
+
+
 
       setCharacteristicBrew(await startNotificationsBrew()
         .then(characteristicBrew => {
@@ -441,7 +458,7 @@ function App() {
         <DrawerHeader />
         <Grid container spacing={1}>
           {selectedPage === "dashboard" ? <>
-            <Dashboard props={[yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure]} />
+            <Dashboard props={[yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure, weight]} />
             <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
             : selectedPage === "profiles" ?
               <Profilling /> :
