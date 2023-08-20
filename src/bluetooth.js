@@ -1,9 +1,10 @@
-const SERVICE_UUID = 0x1A02;
-const TEMP_UUID = 0x1A01;
-const CHARACTERISTIC_UUID = 0x1A02;
-const BREW_UUID = 0x1A03;
-const TARGET_PRESSURE_UUID = 0x1A04;
-const WEIGHT_UUID = 0x1A05;
+const SERVICE_UUID = "381af1eb-b002-4a8e-b698-458841444945";
+const TEMP_UUID = "22cf5e58-b119-4da5-8341-56cc2378f406";
+const PRESSURE_UUID = "07a62719-c9c0-442f-af6c-336e8839469c";
+const BREW_UUID = "0ddcee2d-4a38-46a3-9054-04691f5a7e26";
+const TARGET_PRESSURE_UUID = "202c8717-9005-4eb3-876a-70f977a89c72";
+const WEIGHT_UUID = "8fe6deb9-02f5-4dbd-9bec-1b7291a9ba5a";
+
 
 export const isWebBluetoothSupported = "bluetooth" in navigator;
 
@@ -12,8 +13,8 @@ export const connectToBluetoothDevice = async () => {
     console.log("Bluetooth supported: ", isWebBluetoothSupported)
     const device = await navigator.bluetooth.requestDevice({
       filters: [{
-      services: [SERVICE_UUID],
-      }]  
+        services: [SERVICE_UUID],
+      }]
     })
     const server = await device.gatt.connect()
     window.mdevice = device;
@@ -26,7 +27,7 @@ export const connectToBluetoothDevice = async () => {
   }
 };
 
-export const connectToService = async () =>{
+export const connectToService = async () => {
   const server = window.mserver;
   server.getPrimaryService(SERVICE_UUID);
   const service = await server.getPrimaryService(SERVICE_UUID);
@@ -50,7 +51,7 @@ export const startNotificationsTemperature = async () => {
 export const startNotificationsPressure = async () => {
   try {
     const service = window.mservice;
-    const characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+    const characteristic = await service.getCharacteristic(PRESSURE_UUID);
     window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
     return characteristic;
