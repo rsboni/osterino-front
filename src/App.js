@@ -313,7 +313,6 @@ function App() {
       return e
     }
   }
-  console.log(yPressureValue)
   return (
 
 
