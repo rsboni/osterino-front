@@ -37,7 +37,7 @@ export const startNotificationsTemperature = async () => {
   try {
     const service = window.mservice;
     const characteristic = await service.getCharacteristic(TEMP_UUID);
-    window.mcharacteristic = characteristic;
+    // window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
     return characteristic;
   } catch (error) {
@@ -65,7 +65,7 @@ export const startNotificationsWeight = async () => {
   try {
     const service = window.mservice;
     const characteristic = await service.getCharacteristic(WEIGHT_UUID);
-    window.mcharacteristic = characteristic;
+    // window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
     return characteristic;
   } catch (error) {
@@ -78,7 +78,7 @@ export const startNotificationsBrew = async () => {
   try {
     const service = window.mservice;
     const characteristic = await service.getCharacteristic(BREW_UUID);
-    window.mcharacteristic = characteristic;
+    // window.mcharacteristic = characteristic;
     // await characteristic.startNotifications();
 
     return characteristic;
@@ -92,7 +92,7 @@ export const startNotificationsTargetPressure = async () => {
   try {
     const service = window.mservice;
     const characteristic = await service.getCharacteristic(TARGET_PRESSURE_UUID);
-    window.mcharacteristic = characteristic;
+    // window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
     return characteristic;
   } catch (error) {
