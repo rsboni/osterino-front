@@ -10,7 +10,7 @@ import WeightChart from './WeightChart.js';
 
 
 export default function Dashboard({props}) {
- const [yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure, weight ] = props
+ const [yPressureValue, yTempValue, yWeightValue, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight ] = props
 
  function preventHorizontalKeyboardNavigation(event) {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -64,20 +64,35 @@ export default function Dashboard({props}) {
                 yaxis: [
                   {
                     title: {
-                      text: 'Pressure',
+                      text: 'Pressure (BAR)',
                     },
                     max: 10,
                     min: 0
                   },
                   {
-                    opposite: true,
+                    opposite: false,
                     title: {
-                      text: 'Temperature',
+                      text: 'Temperature (ºC)',
                     },
                     max: 130,
                     min: 70
                   },
-
+                  {
+                    opposite: true,
+                    title: {
+                      text: 'Weight (g)',
+                    },
+                    max: 60,
+                    min: 0
+                  },
+                  {
+                    opposite: true,
+                    title: {
+                      text: 'Flow (g/s)',
+                    },
+                    max: 10,
+                    min: 0
+                  },
                 ],
 
                 legend: {
@@ -100,7 +115,14 @@ export default function Dashboard({props}) {
               type: 'line',
               data: yTempValue,
               color: '#cf2539'
-            }]}
+            },
+            {
+              name: 'Weight',
+              type: 'line',
+              data: yWeightValue,
+              color: '#546E7A'
+            },
+          ]}
 
             height="300px"
           />
@@ -137,7 +159,7 @@ export default function Dashboard({props}) {
         <PressureChart pressure={pressureState} />
       </Grid>
       <Grid item xs={12} sm={3} >
-        <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : yPressureValue[yPressureValue.length - 1][0]} max={Math.floor((new Date().getTime() - startTime) / 1000) > 60 ? Math.floor((new Date().getTime() - startTime) / 1000) : 60} />
+        <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : startTime && !isBrewing ? Math.floor((endTime - startTime)/1000) : yPressureValue[yPressureValue.length - 1][0]} max={Math.floor((new Date().getTime() - startTime) / 1000) > 60 ? Math.floor((new Date().getTime() - startTime) / 1000) : 60} />
       </Grid>
       <Grid item xs={12} sm={3} >
         <WeightChart weight={weight}/>

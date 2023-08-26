@@ -3,8 +3,7 @@ import './App.css';
 import {
   connectToBluetoothDevice,
   connectToService,
-  disconnectFromBluetoothDevice,
-
+  disconnectFromBluetoothDevice
 } from './bluetooth'
 import { Grid, Typography } from '@mui/material'
 import Buttons from './components/Buttons';
@@ -109,8 +108,10 @@ function App() {
   const [device, setDevice] = useState(undefined)
   const [yPressureValue, setYPressureValue] = useState(defaultCurve)
   const [yTempValue, setYTempValue] = useState([[0, 100], [51.5, 97]])
+  const [yWeightValue, setYWeightValue] = useState([[0, 1], [51.5, 40]])
   const [isBrewing, setIsBrewing] = useState(false)
   const [startTime, setStartTime] = useState(0)
+  const [endTime, setEndTime] = useState(0)
   const [demo, setDemo] = useState(false)
   const [characteristicBrew, setCharacteristicBrew] = useState(undefined)
   const [characteristicTargetPressure, setCharacteristicTargetPressure] = useState(undefined)
@@ -131,6 +132,7 @@ function App() {
       setStartTime(new Date().getTime())
       setYPressureValue([[0, pressureState]])
       setYTempValue([[0, tempState]])
+      setYWeightValue([[0, weight]])
       if (device) {
         characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => { })
           .catch(error => {
@@ -144,6 +146,7 @@ function App() {
     }
     else {
       console.log("stopped")
+      setEndTime(new Date().getTime())
       if (device) {
         characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => { })
           .catch(error => {
@@ -161,6 +164,7 @@ function App() {
         if (isBrewing) {
           setYPressureValue(sp => [...sp, [t, pressureState]]);
           setYTempValue(sp => [...sp, [t, tempState]]);
+          setYWeightValue(sp => [...sp, [t, weight]])
         }
         if (!manualBrew) {
           for (var i = 0; i < defaultCurve.length - 1; i++) {
@@ -450,7 +454,7 @@ function App() {
         <DrawerHeader />
         <Grid container spacing={1}>
           {selectedPage === "dashboard" ? <>
-            <Dashboard props={[yPressureValue, yTempValue, targetPressureChange, tempState, pressureState, startTime, isBrewing, targetPressure, weight]} />
+            <Dashboard props={[yPressureValue, yTempValue, yWeightValue, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight]} />
             <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
             : selectedPage === "profiles" ?
               <Profilling /> :
