@@ -52,7 +52,7 @@ export const startNotificationsPressure = async () => {
   try {
     const service = window.mservice;
     const characteristic = await service.getCharacteristic(PRESSURE_UUID);
-    window.mcharacteristic = characteristic;
+    // window.mcharacteristic = characteristic;
     await characteristic.startNotifications();
     return characteristic;
   } catch (error) {
