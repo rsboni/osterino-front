@@ -10,7 +10,7 @@ import WeightChart from './WeightChart.js';
 
 
 export default function Dashboard({props}) {
- const [yPressureValue, yTempValue, yWeightValue, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight ] = props
+ const [yPressureValue, yTempValue, yWeightValue, yFlowValue, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight ] = props
 
  function preventHorizontalKeyboardNavigation(event) {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -122,6 +122,12 @@ export default function Dashboard({props}) {
               data: yWeightValue,
               color: '#546E7A'
             },
+            {
+              name: 'Flow',
+              type: 'line',
+              data: yFlowValue,
+              color: '#3DD142'
+            }
           ]}
 
             height="300px"

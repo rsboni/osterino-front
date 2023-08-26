@@ -109,6 +109,7 @@ function App() {
   const [yPressureValue, setYPressureValue] = useState(defaultCurve)
   const [yTempValue, setYTempValue] = useState([[0, 100], [51.5, 97]])
   const [yWeightValue, setYWeightValue] = useState([[0, 1], [51.5, 40]])
+  const [yFlowValue, setYFlowValue] = useState([[0, 1], [51.5, 40]])
   const [isBrewing, setIsBrewing] = useState(false)
   const [startTime, setStartTime] = useState(0)
   const [endTime, setEndTime] = useState(0)
@@ -132,7 +133,8 @@ function App() {
       setStartTime(new Date().getTime())
       setYPressureValue([[0, pressureState]])
       setYTempValue([[0, tempState]])
-      setYWeightValue([[0, weight]])
+      setYWeightValue([[0, 0]])
+      setYFlowValue([[0, 0]])
       if (device) {
         characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => { })
           .catch(error => {
@@ -161,10 +163,13 @@ function App() {
     if (isBrewing) {
       const interval = setInterval(() => {
         const t = ((new Date().getTime() - startTime) / 1000)
+        const previousT = yFlowValue[yFlowValue.length - 1][0]
+        const previousWeight = yFlowValue[yFlowValue.length -1][1]
         if (isBrewing) {
-          setYPressureValue(sp => [...sp, [t, pressureState]]);
+          setYPressureValue(sp => [...sp, [t, pressureState]]); 
           setYTempValue(sp => [...sp, [t, tempState]]);
           setYWeightValue(sp => [...sp, [t, weight]])
+          setYFlowValue(sp => [...sp, [t, ((weight - previousWeight)/ (t - previousT))]])
         }
         if (!manualBrew) {
           for (var i = 0; i < defaultCurve.length - 1; i++) {
@@ -454,7 +459,7 @@ function App() {
         <DrawerHeader />
         <Grid container spacing={1}>
           {selectedPage === "dashboard" ? <>
-            <Dashboard props={[yPressureValue, yTempValue, yWeightValue, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight]} />
+            <Dashboard props={[yPressureValue, yTempValue, yWeightValue, yFlowValue, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight]} />
             <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
             : selectedPage === "profiles" ?
               <Profilling /> :
