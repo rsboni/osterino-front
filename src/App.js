@@ -201,12 +201,20 @@ function App() {
     }
   }
 
+  const TEMP_UUID = "22cf5e58-b119-4da5-8341-56cc2378f406";
+  const PRESSURE_UUID = "07a62719-c9c0-442f-af6c-336e8839469c";
+  const BREW_UUID = "0ddcee2d-4a38-46a3-9054-04691f5a7e26";
+  const TARGET_PRESSURE_UUID = "202c8717-9005-4eb3-876a-70f977a89c72";
+  const WEIGHT_UUID = "8fe6deb9-02f5-4dbd-9bec-1b7291a9ba5a";
+
+
   const onClick = async () => {
     try {
       const { device } = await connectToBluetoothDevice()
       setDevice(device)
       await connectToService();
-      startNotificationsTemperature().then(characteristic => {
+      const service = window.mservice;
+      service.getCharacteristic(TEMP_UUID).then(c => c.startNotifications()).then(characteristic => {
         characteristic.addEventListener('characteristicvaluechanged', event => {
           const { value } = event.target
           var tempState1 = ''
@@ -219,7 +227,7 @@ function App() {
         console.log("Temperature characteristic added")
       }).then(_ =>
 
-        startNotificationsWeight().then(characteristic => {
+        service.getCharacteristic(WEIGHT_UUID).then(c => c.startNotifications()).then(characteristic => {
           characteristic.addEventListener('characteristicvaluechanged', event => {
             const { value } = event.target
             var weightState = ''
@@ -233,8 +241,7 @@ function App() {
         })).then(_ =>
 
 
-
-          startNotificationsBrew()
+          service.getCharacteristic(BREW_UUID).then(c => c.startNotifications())
             .then(characteristicBrew => {
               characteristicBrew.addEventListener('characteristicvaluechanged', event => {
                 console.log("relay to" + event.target.value.getInt8(0))
@@ -244,7 +251,8 @@ function App() {
               return characteristicBrew;
             })
             .then(_ =>
-              startNotificationsTargetPressure().then(
+              service.getCharacteristic(TARGET_PRESSURE_UUID).then(c => c.startNotifications())
+              .then(
                 characteristicTargetPressure => {
                   characteristicTargetPressure.addEventListener('characteristicvaluechanged', event => {
                     console.log("pressure to" + event.target.value.getInt8(0))
@@ -255,7 +263,8 @@ function App() {
                 }
               )
                 .then(_ =>
-                  startNotificationsPressure().then(
+                  service.getCharacteristic(PRESSURE_UUID).then(c => c.startNotifications())
+                  .then(
                     characteristicPressure => {
                       characteristicPressure.addEventListener('characteristicvaluechanged', event => {
                         const { value } = event.target
