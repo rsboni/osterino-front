@@ -61,7 +61,7 @@ plotOptions: {
       },
       value: {
         formatter: function(val) {
-          return (val*60/100).toFixed(2) + " g";
+          return (val*60/100).toFixed(1) + " g";
         },
         color: '#111',
         fontSize: '18pt',
