@@ -228,7 +228,7 @@ function App() {
           setWeight((weightState / 100).toFixed(2))
           // setTimeout(() => { }, 100);
         })
-        console.log("Temperature characteristic added")
+        console.log("Weight characteristic added")
       }).catch(e => console.log(e))
 
 
@@ -266,7 +266,7 @@ function App() {
       //   console.log("pressure to" + event.target.value.getInt8(0))
       // })
 
-      await startNotificationsPressure().then(
+      startNotificationsPressure().then(
         characteristicPressure => {
           characteristicPressure.addEventListener('characteristicvaluechanged', event => {
             const { value } = event.target
