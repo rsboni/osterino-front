@@ -122,12 +122,12 @@ export default function Dashboard({props}) {
               data: yWeightValue,
               color: '#546E7A'
             },
-            {
-              name: 'Flow',
-              type: 'line',
-              data: yFlowValue,
-              color: '#3DD142'
-            }
+            // {
+            //   name: 'Flow',
+            //   type: 'line',
+            //   data: yFlowValue,
+            //   color: '#3DD142'
+            // }
           ]}
 
             height="300px"
