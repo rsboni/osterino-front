@@ -3,12 +3,8 @@ import './App.css';
 import {
   connectToBluetoothDevice,
   connectToService,
-  startNotificationsTemperature,
   disconnectFromBluetoothDevice,
-  startNotificationsPressure,
-  startNotificationsBrew,
-  startNotificationsTargetPressure,
-  startNotificationsWeight
+
 } from './bluetooth'
 import { Grid, Typography } from '@mui/material'
 import Buttons from './components/Buttons';
@@ -234,7 +230,7 @@ function App() {
             for (var i = 0; i < value.byteLength; i++) {
               weightState += String.fromCharCode(value.getInt8(i))
             }
-            setWeight((weightState / 100).toFixed(2))
+            setWeight((weightState / 100).toFixed(1))
             // setTimeout(() => { }, 100);
           })
           console.log("Weight characteristic added")
@@ -252,31 +248,31 @@ function App() {
             })
             .then(_ =>
               service.getCharacteristic(TARGET_PRESSURE_UUID).then(c => c.startNotifications())
-              .then(
-                characteristicTargetPressure => {
-                  characteristicTargetPressure.addEventListener('characteristicvaluechanged', event => {
-                    console.log("pressure to" + event.target.value.getInt8(0))
-                  })
-                  console.log("Target Pressure BLE characteristic added")
-                  setCharacteristicTargetPressure(characteristicTargetPressure)
-                  return characteristicTargetPressure;
-                }
-              )
+                .then(
+                  characteristicTargetPressure => {
+                    characteristicTargetPressure.addEventListener('characteristicvaluechanged', event => {
+                      console.log("pressure to" + event.target.value.getInt8(0))
+                    })
+                    console.log("Target Pressure BLE characteristic added")
+                    setCharacteristicTargetPressure(characteristicTargetPressure)
+                    return characteristicTargetPressure;
+                  }
+                )
                 .then(_ =>
                   service.getCharacteristic(PRESSURE_UUID).then(c => c.startNotifications())
-                  .then(
-                    characteristicPressure => {
-                      characteristicPressure.addEventListener('characteristicvaluechanged', event => {
-                        const { value } = event.target
-                        var pressure = ''
-                        for (var i = 0; i < value.byteLength; i++) {
-                          pressure += String.fromCharCode(value.getInt8(i))
-                        }
-                        setPressureState((pressure / 100).toFixed(2))
-                      })
-                      console.log("Pressure BLE characteristic added")
-                    }
-                  )
+                    .then(
+                      characteristicPressure => {
+                        characteristicPressure.addEventListener('characteristicvaluechanged', event => {
+                          const { value } = event.target
+                          var pressure = ''
+                          for (var i = 0; i < value.byteLength; i++) {
+                            pressure += String.fromCharCode(value.getInt8(i))
+                          }
+                          setPressureState((pressure / 100).toFixed(2))
+                        })
+                        console.log("Pressure BLE characteristic added")
+                      }
+                    )
                     .catch(e => console.log(e)))))
 
 
