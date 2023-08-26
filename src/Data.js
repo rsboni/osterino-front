@@ -44,22 +44,11 @@ function App() {
       setYTempValue([[0, tempState]])
     }
     setIsBrewing(is => !is)
-
-
-    // characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => {
-    //   console.log('> Characteristic User Description changed to: ' + Uint8Array.of(1));
-    // })
-    // .catch(error => {
-    //   console.log('Argh! ' + error);
-    // })
-        // setTimeout(() => characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => console.log("change back")), 5000)
   }
   useEffect(() => {
     const interval = setInterval(() => {
-      // let t = [...time]
       const t = ((new Date().getTime() - startTime) / 1000)
       if (isBrewing) { 
-        // setTime(t);
         setYPressureValue(sp => [ ...sp, [t, pressureState]]);
         setYTempValue(sp => [...sp, [t, tempState]]);
       }

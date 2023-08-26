@@ -105,6 +105,7 @@ function App() {
   const [tempState, setTempState] = useState(96)
   const [pressureState, setPressureState] = useState(9)
   const [weight, setWeight] = useState(0)
+  const [flow, setFlow] = useState(0)
   const [device, setDevice] = useState(undefined)
   const [yPressureValue, setYPressureValue] = useState(defaultCurve)
   const [yTempValue, setYTempValue] = useState([[0, 100], [51.5, 97]])
@@ -163,13 +164,11 @@ function App() {
     if (isBrewing) {
       const interval = setInterval(() => {
         const t = ((new Date().getTime() - startTime) / 1000)
-        const previousT = yFlowValue[yFlowValue.length - 1][0]
-        const previousWeight = yFlowValue[yFlowValue.length -1][1]
         if (isBrewing) {
-          setYPressureValue(sp => [...sp, [t, pressureState]]); 
+          setYPressureValue(sp => [...sp, [t, pressureState]]);
           setYTempValue(sp => [...sp, [t, tempState]]);
           setYWeightValue(sp => [...sp, [t, weight]])
-          setYFlowValue(sp => [...sp, [t, ((weight - previousWeight)/ (t - previousT))]])
+          setYFlowValue(sp => [...sp, [t, flow]])
         }
         if (!manualBrew) {
           for (var i = 0; i < defaultCurve.length - 1; i++) {
@@ -188,7 +187,7 @@ function App() {
 
           }
         }
-      }, 100);
+      }, 250);
       return () => clearInterval(interval);
     }
   }, [yTempValue]);
@@ -211,6 +210,7 @@ function App() {
   const BREW_UUID = "0ddcee2d-4a38-46a3-9054-04691f5a7e26";
   const TARGET_PRESSURE_UUID = "202c8717-9005-4eb3-876a-70f977a89c72";
   const WEIGHT_UUID = "8fe6deb9-02f5-4dbd-9bec-1b7291a9ba5a";
+  const FLOW_UUID = "3a19025c-0dc3-492c-ae05-db00dfad91cd";
 
 
   const onClick = async () => {
@@ -227,7 +227,6 @@ function App() {
             tempState1 += String.fromCharCode(value.getInt8(i))
           }
           setTempState((tempState1 / 100).toFixed(2))
-          // setTimeout(() => { }, 100);
         })
         console.log("Temperature characteristic added")
       }).then(_ =>
@@ -240,7 +239,6 @@ function App() {
               weightState += String.fromCharCode(value.getInt8(i))
             }
             setWeight((weightState / 100).toFixed(1))
-            // setTimeout(() => { }, 100);
           })
           console.log("Weight characteristic added")
         })).then(_ =>
@@ -266,35 +264,35 @@ function App() {
                     setCharacteristicTargetPressure(characteristicTargetPressure)
                     return characteristicTargetPressure;
                   }
-                )
-                .then(_ =>
-                  service.getCharacteristic(PRESSURE_UUID).then(c => c.startNotifications())
-                    .then(
-                      characteristicPressure => {
-                        characteristicPressure.addEventListener('characteristicvaluechanged', event => {
-                          const { value } = event.target
-                          var pressure = ''
-                          for (var i = 0; i < value.byteLength; i++) {
-                            pressure += String.fromCharCode(value.getInt8(i))
+                ).then(_ =>
+                  service.getCharacteristic(FLOW_UUID).then(c => c.startNotifications())
+                    .then(characteristicFlow => {
+                      characteristicFlow.addEventListener('characteristicvaluechanged', event => {
+                        const { value } = event.target
+                        var flow = ''
+                        for (var i = 0; i < value.byteLength; i++) {
+                          flow += String.fromCharCode(value.getInt8(i))
+                        }
+                        setFlow((flow / 100).toFixed(1))
+                      })
+                      console.log("Flow BLE characteristic added")
+                    })
+                    .then(_ =>
+                      service.getCharacteristic(PRESSURE_UUID).then(c => c.startNotifications())
+                        .then(
+                          characteristicPressure => {
+                            characteristicPressure.addEventListener('characteristicvaluechanged', event => {
+                              const { value } = event.target
+                              var pressure = ''
+                              for (var i = 0; i < value.byteLength; i++) {
+                                pressure += String.fromCharCode(value.getInt8(i))
+                              }
+                              setPressureState((pressure / 100).toFixed(2))
+                            })
+                            console.log("Pressure BLE characteristic added")
                           }
-                          setPressureState((pressure / 100).toFixed(2))
-                        })
-                        console.log("Pressure BLE characteristic added")
-                      }
-                    )
-                    .catch(e => console.log(e)))))
-
-
-      // const characteristicPressure = await startNotificationsPressure(server).catch(e => console.log(e))
-      // setTimeout(() => { }, 200);
-      // characteristicPressure.addEventListener('characteristicvaluechanged', event => {
-      //   const { value } = event.target
-      //   var pressure = ''
-      //   for (var i = 0; i < value.byteLength; i++) {
-      //     pressure += String.fromCharCode(value.getInt8(i))
-      //   }
-      //   setPressureState((pressure / 100).toFixed(2))
-      // })
+                        )
+                        .catch(e => console.log(e))))))
 
       device.addEventListener('gattserverdisconnected', () => {
         disconnectFromBluetoothDevice(device)
