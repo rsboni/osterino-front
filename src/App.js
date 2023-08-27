@@ -141,15 +141,15 @@ function App() {
         characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => { })
           .catch(error => {
             console.log('Argh! in brew characteristics ' + error);
-          })
+          }).then(_ => 
         characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => { })
           .catch(error => {
             console.log('Argh! in target pressure characteristics ' + error);
-          })
+          }).then(_=>
         characteristicTargetWeight.writeValue(Uint8Array.of(40)).then(_ => { })
           .catch(error => {
             console.log('Argh! in target weight characteristics ' + error);
-          })
+          })))
       }
     setIsBrewing(true) 
 
