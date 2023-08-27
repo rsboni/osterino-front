@@ -117,6 +117,7 @@ function App() {
   const [demo, setDemo] = useState(false)
   const [characteristicBrew, setCharacteristicBrew] = useState(undefined)
   const [characteristicTargetPressure, setCharacteristicTargetPressure] = useState(undefined)
+  const [characteristicTargetWeight, setCharacteristicTargetWeight] = useState(undefined)
   const [targetPressure, setTargetPressure] = useState(9);
   const [open, setOpen] = useState(false);
   const handleDrawerOpen = () => {
@@ -145,10 +146,22 @@ function App() {
           .catch(error => {
             console.log('Argh! in target pressure characteristics ' + error);
           })
+        characteristicTargetWeight.writeValue(Uint8Array.of(40)).then(_ => { })
+          .catch(error => {
+            console.log('Argh! in target weight characteristics ' + error);
+          })
       }
+    setIsBrewing(true) 
+
     }
     else {
-      console.log("stopped")
+      stopBrew()
+      
+    }
+  }
+
+  const stopBrew = () => {
+    console.log("stopped brewing")
       setEndTime(new Date().getTime())
       if (device) {
         characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => { })
@@ -156,8 +169,7 @@ function App() {
             console.log('Argh! ' + error);
           })
       }
-    }
-    setIsBrewing(is => !is)
+      setIsBrewing(false);
   }
 
   useEffect(() => {
@@ -169,6 +181,8 @@ function App() {
           setYTempValue(sp => [...sp, [t, tempState]]);
           setYWeightValue(sp => [...sp, [t, weight]])
           setYFlowValue(sp => [...sp, [t, flow]])
+          console.log("Pressure: " + pressureState + "Weight: " + weight + "TargetPressure: " + targetPressure);
+
         }
         if (!manualBrew) {
           for (var i = 0; i < defaultCurve.length - 1; i++) {
@@ -211,6 +225,7 @@ function App() {
   const TARGET_PRESSURE_UUID = "202c8717-9005-4eb3-876a-70f977a89c72";
   const WEIGHT_UUID = "8fe6deb9-02f5-4dbd-9bec-1b7291a9ba5a";
   const FLOW_UUID = "3a19025c-0dc3-492c-ae05-db00dfad91cd";
+  const TARGET_WEIGHT_UUID = "9414b5a6-fcb2-492d-8023-e34348fa7870";
 
 
   const onClick = async () => {
@@ -248,6 +263,7 @@ function App() {
             .then(characteristicBrew => {
               characteristicBrew.addEventListener('characteristicvaluechanged', event => {
                 console.log("relay to" + event.target.value.getInt8(0))
+                stopBrew();
               })
               console.log("Brew BLE characteristic added")
               setCharacteristicBrew(characteristicBrew)
@@ -265,6 +281,19 @@ function App() {
                     return characteristicTargetPressure;
                   }
                 ).then(_ =>
+              service.getCharacteristic(TARGET_WEIGHT_UUID).then(c => c.startNotifications())
+                .then(
+                  characteristicTargetWeight => {
+                    characteristicTargetWeight.addEventListener('characteristicvaluechanged', event => {
+                      console.log("Target weight to" + event.target.value.getInt8(0))
+
+                    })
+                    console.log("Target Weight BLE characteristic added")
+                    setCharacteristicTargetWeight(characteristicTargetWeight)
+                    return characteristicTargetWeight;
+                  }
+                )
+                .then(_ =>
                   service.getCharacteristic(FLOW_UUID).then(c => c.startNotifications())
                     .then(characteristicFlow => {
                       characteristicFlow.addEventListener('characteristicvaluechanged', event => {
@@ -292,7 +321,7 @@ function App() {
                             console.log("Pressure BLE characteristic added")
                           }
                         )
-                        .catch(e => console.log(e))))))
+                        .catch(e => console.log(e)))))))
 
       device.addEventListener('gattserverdisconnected', () => {
         disconnectFromBluetoothDevice(device)
