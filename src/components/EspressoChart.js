@@ -14,7 +14,7 @@ export default function EspressoChart({ props }) {
           chart: {
             id: 'realtime',
             offsetX: 0,
-            height: 350,
+            height: 400,
             type: 'line',
             animations: {
               enabled: true,
@@ -120,7 +120,7 @@ export default function EspressoChart({ props }) {
       }
       ]}
 
-      height="300px"
+      height="400px"
     />
   )
 }
