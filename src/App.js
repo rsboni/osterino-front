@@ -26,7 +26,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Bluetooth, Coffee, Settings, SsidChart, Water } from '@mui/icons-material';
-import { curveCalculator, profileMap } from './utils/profileCalculator';
+import { profileMap } from './utils/profileCalculator';
 import { profiles } from './utils/profiles';
 const drawerWidth = 240;
 
@@ -98,10 +98,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 function App() {
-  const [yTempValueDefault, yWeightValueDefault, yFlowValueDefault, yPressureValueDefault, labelsDefault] = profileMap(profiles[8])
+  const [xValueDefault, yTempValueDefault, yWeightValueDefault, yFlowValueDefault, yPressureValueDefault, labelsDefault] = profileMap(profiles[8])
   
   const theme = useTheme();
   const [defaultCurve, setDefaultCurve] = useState(yPressureValueDefault)
+  const [defaultX, setDefaultX] = useState(xValueDefault)
   const [targetWeight, setTargetWeight] = useState(40);
   const [manualBrew, setManualBrew] = useState(false);
   const [selectedPage, setSelectedPage] = useState("dashboard")
@@ -111,6 +112,7 @@ function App() {
   const [flow, setFlow] = useState(0)
   const [device, setDevice] = useState(undefined)
   const [yPressureValue, setYPressureValue] = useState(yPressureValueDefault)
+  const [xValue, setXvalue] = useState(xValueDefault)
   const [yTempValue, setYTempValue] = useState(yTempValueDefault)
   const [yWeightValue, setYWeightValue] = useState(yWeightValueDefault)
   const [yFlowValue, setYFlowValue] = useState(yFlowValueDefault)
@@ -133,14 +135,16 @@ function App() {
   };
 
   const setProfile = (profile) => {
-    const [yTempValueDefault, yWeightValueDefault, yFlowValueDefault, yPressureValueDefault, labelsDefault] = profileMap(profile)
+    const [xValueDefault, yTempValueDefault, yWeightValueDefault, yFlowValueDefault, yPressureValueDefault, labelsDefault] = profileMap(profile)
       setYTempValue(yTempValueDefault)
       setYWeightValue(yWeightValueDefault)
       setYFlowValue(yFlowValueDefault)
       setYPressureValue(yPressureValueDefault)
+      setXvalue(xValueDefault)
       setLabels(labelsDefault)
       setSelectedPage("dashboard")
       setDefaultCurve(yPressureValue)
+      setDefaultX(xValueDefault)
       setTargetWeight(parseInt(profile.target_weight))
     }
 
@@ -148,20 +152,21 @@ function App() {
     if (!isBrewing) {
       console.log("brewing")
       setStartTime(new Date().getTime())
-      setYPressureValue([[0, pressureState]])
-      setYTempValue([[0, tempState]])
-      setYWeightValue([[0, 0]])
-      setYFlowValue([[0, 0]])
+      setYPressureValue([pressureState])
+      setYTempValue([tempState])
+      setYWeightValue([0])
+      setYFlowValue([0])
+      setXvalue([0])
       if (device) {
         characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => { })
           .catch(error => {
             console.log('Argh! in brew characteristics ' + error);
           }).then(_ => 
-        characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => { })
+        characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => {})
           .catch(error => {
             console.log('Argh! in target pressure characteristics ' + error);
           }).then(_=>
-        characteristicTargetWeight.writeValue(Uint8Array.of(targetWeight)).then(_ => { })
+        characteristicTargetWeight.writeValue(Uint8Array.of(targetWeight)).then(_ => { console.log("Set Weight to = " + targetWeight) })
           .catch(error => {
             console.log('Argh! in target weight characteristics ' + error);
           })))
@@ -171,7 +176,6 @@ function App() {
     }
     else {
       stopBrew()
-      
     }
   }
 
@@ -192,20 +196,21 @@ function App() {
       const interval = setInterval(() => {
         const t = ((new Date().getTime() - startTime) / 1000)
         if (isBrewing) {
-          setYPressureValue(sp => [...sp, [t, pressureState]]);
-          setYTempValue(sp => [...sp, [t, tempState]]);
-          setYWeightValue(sp => [...sp, [t, weight]])
-          setYFlowValue(sp => [...sp, [t, flow]])
+          setXvalue(sp => [...sp, t])
+          setYPressureValue(sp => [...sp, pressureState]);
+          setYTempValue(sp => [...sp,tempState]);
+          setYWeightValue(sp => [...sp, weight])
+          setYFlowValue(sp => [...sp, flow])
           console.log("Pressure: " + pressureState + "Weight: " + weight + "TargetPressure: " + targetPressure);
 
         }
         if (!manualBrew) {
           for (var i = 0; i < defaultCurve.length - 1; i++) {
-            if (defaultCurve[i][0] <= t && defaultCurve[i + 1][0] > t) {
-              if (targetPressure !== defaultCurve[i][1]) {
-                setTargetPressure(defaultCurve[i][1])
-                console.log("Setting presure to " + (defaultCurve[i][1] * 10))
-                characteristicTargetPressure.writeValue(Uint8Array.of(defaultCurve[i][1] * 10)).then(_ => { })
+            if (defaultX[i] <= t && defaultX[i + 1] > t) {
+              if (targetPressure !== defaultCurve[i]) {
+                setTargetPressure(defaultCurve[i])
+                console.log("Setting presure to " + (defaultCurve[i] * 10))
+                characteristicTargetPressure.writeValue(Uint8Array.of(defaultCurve[i] * 10)).then(_ => { })
                   .catch(error => {
                     console.log('Argh! ' + error);
                   })
@@ -501,7 +506,7 @@ function App() {
         <DrawerHeader />
         <Grid container spacing={1}>
           {selectedPage === "dashboard" ? <>
-            <Dashboard props={[yPressureValue, yTempValue, yWeightValue, yFlowValue, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight]} />
+            <Dashboard props={[xValue, yPressureValue, yTempValue, yWeightValue, yFlowValue, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight]} />
             <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
             : selectedPage === "profiles" ?
               <Profilling setProfile={setProfile}/> :

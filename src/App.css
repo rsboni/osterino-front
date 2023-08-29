@@ -4,9 +4,8 @@
   margin: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.MuiLinearProgress-bar {
+  transition: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -30,11 +29,3 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
