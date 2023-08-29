@@ -141,10 +141,10 @@ function App() {
       setYFlowValue(yFlowValueDefault)
       setYPressureValue(yPressureValueDefault)
       setXvalue(xValueDefault)
+      setDefaultX(xValueDefault)
       setLabels(labelsDefault)
       setSelectedPage("dashboard")
-      setDefaultCurve(yPressureValue)
-      setDefaultX(xValueDefault)
+      setDefaultCurve(yPressureValueDefault)
       setTargetWeight(parseInt(profile.target_weight))
     }
 
