@@ -2,7 +2,7 @@ import React from 'react'
 import Chart from 'react-apexcharts';
 
 export default function EspressoChart({ props }) {
-  const [xValue, yTempValue, yWeightValue, yFlowValue, yPressureValue, labels = [], displayYaxisLegend = true] = props
+  const [data, labels = [], displayYaxisLegend = true] = props
   return (
     <Chart
       options={
@@ -45,7 +45,7 @@ export default function EspressoChart({ props }) {
           xaxis: {
             type: 'numeric',
             // range: yTempValue.length,
-            categories: xValue
+            categories: data.time
           },
           yaxis: [
             {
@@ -98,24 +98,24 @@ export default function EspressoChart({ props }) {
       series={[{
         name: 'Pressure',
         type: 'area',
-        data: yPressureValue
+        data: data.pressure
       },
       {
         name: 'Temperature',
         type: 'line',
-        data: yTempValue,
+        data: data.temperature,
         color: '#cf2539'
       },
       {
         name: 'Weight',
         type: 'line',
-        data: yWeightValue,
+        data: data.weight,
         color: '#546E7A'
       },
       {
         name: 'Flow',
         type: 'line',
-        data: yFlowValue,
+        data: data.flow,
         color: '#3DD142'
       }
       ]}

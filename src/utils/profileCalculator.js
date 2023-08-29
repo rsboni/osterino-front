@@ -22,7 +22,8 @@ export const xCalcultaor = (start, end, step = 0.5) => {
 
 export const profileMap = (profile) => {
   let t = 0
-  let xValue = [], yTempValue = [], yWeightValue = [], yFlowValue = [], yPressureValue = [], labels = []
+  const data = {time:[],temperature:[],flow:[],pressure:[],}
+  let labels = []
   profile.steps.forEach((step, index, array) => {
     const duration = parseFloat(step.seconds)
     const temperature = parseFloat(step.temperature ??= 0)
@@ -35,12 +36,12 @@ export const profileMap = (profile) => {
         text: step.name,
       }
     })
-    xValue.push(...xCalcultaor(t, t + duration - 1))
-    yTempValue.push(...curveCalculator(temperature, temperature, duration - 1, t))
-    yFlowValue.push(...curveCalculator(flow, flow, duration - 1, t))
-    yPressureValue.push(...curveCalculator(step.transition === "smooth" ? previousPressure : pressure, pressure, duration - 1, t))
+    data.time.push(...xCalcultaor(t, t + duration - 1))
+    data.temperature.push(...curveCalculator(temperature, temperature, duration - 1, t))
+    data.flow.push(...curveCalculator(flow, flow, duration - 1, t))
+    data.pressure.push(...curveCalculator(step.transition === "smooth" ? previousPressure : pressure, pressure, duration - 1, t))
     t = t + duration
   });
 
-  return [xValue, yTempValue, yWeightValue, yFlowValue, yPressureValue, labels]
+  return [data, labels]
 }

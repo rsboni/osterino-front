@@ -21,7 +21,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 export default function Dashboard({ props }) {
-  const [xValue, yPressureValue, yTempValue, yWeightValue, yFlowValue, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight, targetWeight] = props
+  const [data, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight, targetWeight] = props
 
   function preventHorizontalKeyboardNavigation(event) {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -35,7 +35,7 @@ export default function Dashboard({ props }) {
 
         <Grid item xs={11} sm={11} md={11} lg={11}>
           {/* <Typography variant='h4'>{title}</Typography> */}
-          <EspressoChart props={[xValue, yTempValue, yWeightValue, yFlowValue, yPressureValue, labels]} />
+          <EspressoChart props={[data, labels]} />
         </Grid>
 
         <Grid item xs={1}>
@@ -77,17 +77,18 @@ export default function Dashboard({ props }) {
 
         </Grid>
         <Grid item xs={12} sm={3} >
-          {/* <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : startTime && !isBrewing ? Math.floor((endTime - startTime)/1000) : yPressureValue[yPressureValue.length - 1][0]} max={Math.floor((new Date().getTime() - startTime) / 1000) > 60 ? Math.floor((new Date().getTime() - startTime) / 1000) : 60} /> */}
+          {/* <TimeChart time={startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : startTime && !isBrewing ? Math.floor((endTime - startTime)/1000) : data.pressure[data.pressure.length - 1][0]} max={Math.floor((new Date().getTime() - startTime) / 1000) > 60 ? Math.floor((new Date().getTime() - startTime) / 1000) : 60} /> */}
           <Typography><b>Time:</b></Typography>
-            <BorderLinearProgress variant="determinate" value={(startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : startTime && !isBrewing ? Math.floor((endTime - startTime) / 1000) : yPressureValue[yPressureValue.length - 1][0]) / 100 * 100} />
-            <Typography>{startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : startTime && !isBrewing ? Math.floor((endTime - startTime) / 1000) : yPressureValue[yPressureValue.length - 1][0]} sec</Typography>
+            <BorderLinearProgress variant="determinate" value={(startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : startTime && !isBrewing ? Math.floor((endTime - startTime) / 1000) : data.time[data.time.length - 1]) / 100 * 100} />
+            <Typography>{startTime && isBrewing ? Math.floor((new Date().getTime() - startTime) / 1000) : startTime && !isBrewing ? Math.floor((endTime - startTime) / 1000) : data.pressure[data.pressure.length - 1]} sec</Typography>
 
         </Grid>
-        <Grid item xs={12} sm={3} >
-          <Typography><b>Weigth:</b>
+        <Grid item xs={12} sm={3}   justifyContent="flex-end"   direction="row"
+>
+          <Typography><b>Weigth:</b></Typography>
             <BorderLinearProgress variant="determinate" value={weight / (weight > 50 ? weight : 50) * 100} />
 
-            {weight} g <br/></Typography>
+            <Typography>{weight} g <br/></Typography>
             <Typography variant='body2'><b>Target:</b> {targetWeight} g</Typography>
 
           {/* <WeightChart weight={weight}/> */}

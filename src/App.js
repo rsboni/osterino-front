@@ -102,24 +102,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 function App() {
-  const [xValueDefault, yTempValueDefault, yWeightValueDefault, yFlowValueDefault, yPressureValueDefault, labelsDefault] = profileMap(profiles[8])
+  const [defaultData, labelsDefault] = profileMap(profiles[8])
   
   const theme = useTheme();
-  const [defaultCurve, setDefaultCurve] = useState(yPressureValueDefault)
-  const [defaultX, setDefaultX] = useState(xValueDefault)
+  const [targetPressureCurve, setTargetPressureCurve] = useState(defaultData.pressure)
+  const [targetTime, setTargetTime] = useState(defaultData.time)
   const [targetWeight, setTargetWeight] = useState(40);
   const [manualBrew, setManualBrew] = useState(false);
   const [selectedPage, setSelectedPage] = useState("dashboard")
-  const [tempState, setTempState] = useState(96)
-  const [pressureState, setPressureState] = useState(9)
+  const [currentTemperature, setCurrentTemperature] = useState(96)
+  const [currentPressure, setCurrentPressure] = useState(9)
   const [weight, setWeight] = useState(0)
   const [flow, setFlow] = useState(0)
   const [device, setDevice] = useState(undefined)
-  const [yPressureValue, setYPressureValue] = useState(yPressureValueDefault)
-  const [xValue, setXvalue] = useState(xValueDefault)
-  const [yTempValue, setYTempValue] = useState(yTempValueDefault)
-  const [yWeightValue, setYWeightValue] = useState(yWeightValueDefault)
-  const [yFlowValue, setYFlowValue] = useState(yFlowValueDefault)
+  const [data, setData] = useState(defaultData)
   const [labels, setLabels] = useState(labelsDefault)
   const [isBrewing, setIsBrewing] = useState(false)
   const [startTime, setStartTime] = useState(0)
@@ -139,16 +135,12 @@ function App() {
   };
 
   const setProfile = (profile) => {
-    const [xValueDefault, yTempValueDefault, yWeightValueDefault, yFlowValueDefault, yPressureValueDefault, labelsDefault] = profileMap(profile)
-      setYTempValue(yTempValueDefault)
-      setYWeightValue(yWeightValueDefault)
-      setYFlowValue(yFlowValueDefault)
-      setYPressureValue(yPressureValueDefault)
-      setXvalue(xValueDefault)
-      setDefaultX(xValueDefault)
-      setLabels(labelsDefault)
+    const [data, labels] = profileMap(profile)
+      setData(data)
+      setLabels(labels)
       setSelectedPage("dashboard")
-      setDefaultCurve(yPressureValueDefault)
+      setTargetTime(data.time)
+      setTargetPressureCurve(data.pressure)
       setTargetWeight(parseInt(profile.target_weight))
     }
 
@@ -156,11 +148,16 @@ function App() {
     if (!isBrewing) {
       console.log("brewing")
       setStartTime(new Date().getTime())
-      setYPressureValue([pressureState])
-      setYTempValue([tempState])
-      setYWeightValue([0])
-      setYFlowValue([0])
-      setXvalue([0])
+      setData(data => {
+        const newData = data
+        newData.pressure=[currentPressure]
+        newData.temperature=[currentTemperature]
+        newData.weight=[0]
+        newData.flow=[0]
+        newData.time=[0]
+        return newData
+      })
+      
       if (device) {
         characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => { })
           .catch(error => {
@@ -200,21 +197,25 @@ function App() {
       const interval = setInterval(() => {
         const t = ((new Date().getTime() - startTime) / 1000)
         if (isBrewing) {
-          setXvalue(sp => [...sp, t])
-          setYPressureValue(sp => [...sp, pressureState]);
-          setYTempValue(sp => [...sp,tempState]);
-          setYWeightValue(sp => [...sp, weight])
-          setYFlowValue(sp => [...sp, flow])
-          console.log("Pressure: " + pressureState + "Weight: " + weight + "TargetPressure: " + targetPressure);
+          setData(data => {
+            const newData = data
+            newData.pressure.push(currentPressure)
+            newData.temperature.push(currentTemperature)
+            newData.weight.push(weight)
+            newData.flow.push(flow)
+            newData.time.push(t)
+            return newData
+          })
+          // console.log("Pressure: " + currentPressure + "Weight: " + weight + "TargetPressure: " + targetPressure);
 
         }
         if (!manualBrew) {
-          for (var i = 0; i < defaultCurve.length - 1; i++) {
-            if (defaultX[i] <= t && defaultX[i + 1] > t) {
-              if (targetPressure !== defaultCurve[i]) {
-                setTargetPressure(defaultCurve[i])
-                console.log("Setting presure to " + (defaultCurve[i] * 10))
-                characteristicTargetPressure.writeValue(Uint8Array.of(defaultCurve[i] * 10)).then(_ => { })
+          for (var i = 0; i < targetPressureCurve.length - 1; i++) {
+            if (targetTime[i] <= t && targetTime[i + 1] > t) {
+              if (targetPressure !== targetPressureCurve[i]) {
+                setTargetPressure(targetPressureCurve[i])
+                console.log("Setting presure to " + (targetPressureCurve[i] * 10) + "curve=" + targetPressureCurve[i] + " target:" + targetPressure)
+                characteristicTargetPressure.writeValue(Uint8Array.of(targetPressureCurve[i] * 10)).then(_ => { })
                   .catch(error => {
                     console.log('Argh! ' + error);
                   })
@@ -225,10 +226,10 @@ function App() {
 
           }
         }
-      }, 250);
+      }, 100);
       return () => clearInterval(interval);
     }
-  }, [yTempValue]);
+  });
 
 
   const targetPressureChange = async (e) => {
@@ -261,11 +262,11 @@ function App() {
       service.getCharacteristic(TEMP_UUID).then(c => c.startNotifications()).then(characteristic => {
         characteristic.addEventListener('characteristicvaluechanged', event => {
           const { value } = event.target
-          var tempState1 = ''
+          var currentTemperature1 = ''
           for (var i = 0; i < value.byteLength; i++) {
-            tempState1 += String.fromCharCode(value.getInt8(i))
+            currentTemperature1 += String.fromCharCode(value.getInt8(i))
           }
-          setTempState((tempState1 / 100).toFixed(2))
+          setCurrentTemperature((currentTemperature1 / 100).toFixed(2))
         })
         console.log("Temperature characteristic added")
       }).then(_ =>
@@ -340,7 +341,7 @@ function App() {
                               for (var i = 0; i < value.byteLength; i++) {
                                 pressure += String.fromCharCode(value.getInt8(i))
                               }
-                              setPressureState((pressure / 100).toFixed(2))
+                              setCurrentPressure((pressure / 100).toFixed(2))
                             })
                             console.log("Pressure BLE characteristic added")
                           }
@@ -510,7 +511,7 @@ function App() {
         <DrawerHeader />
         <Grid container spacing={1}>
           {selectedPage === "dashboard" ? <>
-            <Dashboard props={[xValue, yPressureValue, yTempValue, yWeightValue, yFlowValue, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight, targetWeight]} />
+            <Dashboard props={[data, labels, targetPressureChange, currentTemperature, currentPressure, startTime, endTime, isBrewing, targetPressure, weight, targetWeight]} />
             <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
             : selectedPage === "profiles" ?
               <Profilling setProfile={setProfile}/> :
