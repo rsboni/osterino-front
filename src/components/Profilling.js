@@ -5,7 +5,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { profiles } from '../utils/profiles';
 import ProfileCard from './ProfileCard';
-export default function Profilling() {
+import { Button } from '@mui/material';
+export default function Profilling(props) {
+  const {setProfile} = props
   const [selectedIndex, setSelectedIndex] = React.useState(1);
 
   const handleListItemClick = (event, index) => {
@@ -19,7 +21,6 @@ export default function Profilling() {
         bgcolor: 'background.paper',
         position: 'relative',
         overflow: 'auto',
-        // maxHeight: '100vh',
         '& ul': { padding: 0 },
       }}>
         {profiles.map((profile, index) => {
@@ -36,6 +37,15 @@ export default function Profilling() {
     </Box>
     <Box sx={{ width: '60%', maxWidth: 900, bgcolor: 'background.paper',flexGrow: 1, p: 3, overflow:'auto' }}>
       <ProfileCard profile={profiles[selectedIndex]} />
+      <Button
+            fullWidth
+            variant='contained'
+            size='large'
+            className='button'
+            color='primary'
+            onClick={() => setProfile(profiles[selectedIndex])}
+            spacing={2}
+          > Set Profile </Button>
     </Box>
   </Box>
   );

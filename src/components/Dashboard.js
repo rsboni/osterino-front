@@ -7,10 +7,11 @@ import Grid from "@mui/material/Grid"
 import TimeChart from './TimeChart';
 import WeightChart from './WeightChart.js';
 import EspressoChart from './EspressoChart.js';
+import { Typography } from '@mui/material';
 
 
 export default function Dashboard({props}) {
- const [yPressureValue, yTempValue, yWeightValue, yFlowValue, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight ] = props
+ const [yPressureValue, yTempValue, yWeightValue, yFlowValue, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight ] = props
 
  function preventHorizontalKeyboardNavigation(event) {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -23,7 +24,8 @@ export default function Dashboard({props}) {
       <Grid container xs={11}  justifyContent="center"   direction="row"   alignItems="flex-start" spacing={2}>
 
         <Grid item xs={11} sm={11} md={11} lg={11}>
-          <EspressoChart props={[yTempValue, yWeightValue, yFlowValue, yPressureValue]} />
+          {/* <Typography variant='h4'>{title}</Typography> */}
+          <EspressoChart props={[yTempValue, yWeightValue, yFlowValue, yPressureValue, labels]} />
         </Grid>
 
         <Grid item xs={1}>

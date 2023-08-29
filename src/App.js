@@ -26,8 +26,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Bluetooth, Coffee, Settings, SsidChart, Water } from '@mui/icons-material';
-import { curveCalculator } from './utils/profileCalculator';
-
+import { curveCalculator, profileMap } from './utils/profileCalculator';
+import { profiles } from './utils/profiles';
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -98,8 +98,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 function App() {
+  const [yTempValueDefault, yWeightValueDefault, yFlowValueDefault, yPressureValueDefault, labelsDefault] = profileMap(profiles[8])
+  
   const theme = useTheme();
-  const defaultCurve = [...curveCalculator(0, 2, 1, 0.5, 0), ...curveCalculator(2, 2, 9, 0.5, 1), ...curveCalculator(2, 9, 2, 0.5, 10), ...curveCalculator(9, 6, 40, 0.5, 12)]
+  const [defaultCurve, setDefaultCurve] = useState(yPressureValueDefault)
+  const [targetWeight, setTargetWeight] = useState(40);
   const [manualBrew, setManualBrew] = useState(false);
   const [selectedPage, setSelectedPage] = useState("dashboard")
   const [tempState, setTempState] = useState(96)
@@ -107,10 +110,11 @@ function App() {
   const [weight, setWeight] = useState(0)
   const [flow, setFlow] = useState(0)
   const [device, setDevice] = useState(undefined)
-  const [yPressureValue, setYPressureValue] = useState(defaultCurve)
-  const [yTempValue, setYTempValue] = useState([[0, 100], [51.5, 97]])
-  const [yWeightValue, setYWeightValue] = useState([[0, 1], [51.5, 40]])
-  const [yFlowValue, setYFlowValue] = useState([[0, 1], [51.5, 40]])
+  const [yPressureValue, setYPressureValue] = useState(yPressureValueDefault)
+  const [yTempValue, setYTempValue] = useState(yTempValueDefault)
+  const [yWeightValue, setYWeightValue] = useState(yWeightValueDefault)
+  const [yFlowValue, setYFlowValue] = useState(yFlowValueDefault)
+  const [labels, setLabels] = useState(labelsDefault)
   const [isBrewing, setIsBrewing] = useState(false)
   const [startTime, setStartTime] = useState(0)
   const [endTime, setEndTime] = useState(0)
@@ -128,6 +132,17 @@ function App() {
     setOpen(false);
   };
 
+  const setProfile = (profile) => {
+    const [yTempValueDefault, yWeightValueDefault, yFlowValueDefault, yPressureValueDefault, labelsDefault] = profileMap(profile)
+      setYTempValue(yTempValueDefault)
+      setYWeightValue(yWeightValueDefault)
+      setYFlowValue(yFlowValueDefault)
+      setYPressureValue(yPressureValueDefault)
+      setLabels(labelsDefault)
+      setSelectedPage("dashboard")
+      setDefaultCurve(yPressureValue)
+      setTargetWeight(parseInt(profile.target_weight))
+    }
 
   const toggleBrew = () => {
     if (!isBrewing) {
@@ -146,7 +161,7 @@ function App() {
           .catch(error => {
             console.log('Argh! in target pressure characteristics ' + error);
           }).then(_=>
-        characteristicTargetWeight.writeValue(Uint8Array.of(40)).then(_ => { })
+        characteristicTargetWeight.writeValue(Uint8Array.of(targetWeight)).then(_ => { })
           .catch(error => {
             console.log('Argh! in target weight characteristics ' + error);
           })))
@@ -486,10 +501,10 @@ function App() {
         <DrawerHeader />
         <Grid container spacing={1}>
           {selectedPage === "dashboard" ? <>
-            <Dashboard props={[yPressureValue, yTempValue, yWeightValue, yFlowValue, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight]} />
+            <Dashboard props={[yPressureValue, yTempValue, yWeightValue, yFlowValue, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight]} />
             <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
             : selectedPage === "profiles" ?
-              <Profilling /> :
+              <Profilling setProfile={setProfile}/> :
               ""}
         </Grid>
       </Box>
