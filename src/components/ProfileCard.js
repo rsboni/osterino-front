@@ -8,7 +8,7 @@ export default function ProfileCard({profile}) {
 
   return (
     <div>
-      <EspressoChart props={[data, labels, false]}/>
+      <EspressoChart props={[data, labels, false, '200px']}/>
      <Typography variant='h4'>{profile.title}</Typography>
      <Typography variant='subtitle1'>{profile.author}</Typography>
      <Divider />
