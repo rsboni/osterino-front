@@ -28,6 +28,10 @@ import ListItemText from '@mui/material/ListItemText';
 import { Bluetooth, Coffee, Settings, SsidChart, Water } from '@mui/icons-material';
 import { profileMap } from './utils/profileCalculator';
 import { profiles } from './utils/profiles';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
