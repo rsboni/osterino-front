@@ -2,7 +2,7 @@ import React from 'react'
 import Chart from 'react-apexcharts';
 
 export default function EspressoChart({ props }) {
-  const [data, labels = [], displayYaxisLegend = true, height = 'auto'] = props
+  const [data, labels = [], displayYaxisLegend = true, height = '450px'] = props
   return (
     <Chart
       options={
