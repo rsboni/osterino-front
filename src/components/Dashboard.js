@@ -21,7 +21,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 export default function Dashboard({ props }) {
-  const [xValue, yPressureValue, yTempValue, yWeightValue, yFlowValue, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight] = props
+  const [xValue, yPressureValue, yTempValue, yWeightValue, yFlowValue, labels, targetPressureChange, tempState, pressureState, startTime, endTime, isBrewing, targetPressure, weight, targetWeight] = props
 
   function preventHorizontalKeyboardNavigation(event) {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -86,7 +86,7 @@ export default function Dashboard({ props }) {
           <Typography><b>Weigth:</b>
             <BorderLinearProgress variant="determinate" value={weight / (weight > 50 ? weight : 50) * 100} />
 
-            {weight} g</Typography>
+            {weight} g (Target Weight: {targetWeight} g)</Typography>
 
           {/* <WeightChart weight={weight}/> */}
         </Grid>
