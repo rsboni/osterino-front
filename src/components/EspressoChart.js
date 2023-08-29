@@ -2,7 +2,7 @@ import React from 'react'
 import Chart from 'react-apexcharts';
 
 export default function EspressoChart({ props }) {
-  const [data, labels = [], displayYaxisLegend = true] = props
+  const [data, labels = [], displayYaxisLegend = true, height = 'auto'] = props
   return (
     <Chart
       options={
@@ -14,7 +14,7 @@ export default function EspressoChart({ props }) {
           chart: {
             id: 'realtime',
             offsetX: 0,
-            height: 400,
+            height: {height},
             type: 'line',
             animations: {
               enabled: true,
@@ -120,7 +120,7 @@ export default function EspressoChart({ props }) {
       }
       ]}
 
-      height="400px"
+      height={height}
     />
   )
 }
