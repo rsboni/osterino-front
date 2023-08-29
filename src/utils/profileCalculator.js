@@ -15,7 +15,6 @@ export const profileMap = (profile) => {
   let t = 0
   let yTempValue = [], yWeightValue = [], yFlowValue = [], yPressureValue = []
   profile.steps.forEach((step, index, array)=> {
-    console.log(step)
     const duration = parseFloat(step.seconds)
     const temperature = parseFloat(step.temperature ??=0)
     const flow = parseFloat(step.flow??= 0)
