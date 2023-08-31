@@ -57,5 +57,16 @@ export const { setCurrentBrew, setCurrentFlow, setCurrentManualBrew, setCurrentP
 
 export const selectCurrentTargetPresure = (state) => state.currentState.currentTargetPressure
 
+export const selectCurrentWeight = (state) => state.currentState.currentWeight
+export const selectCurrentTemperature = (state) => state.currentState.currentTemperature
+export const selectCurrentPressure = (state) => state.currentState.currentPressure
+export const selectCurrentTargetPressure = (state) => state.currentState.currentTargetPressure
+export const selectCurrentStartTime = (state) => state.currentState.currentStartTime
+export const selectCurrentEndTime = (state) => state.currentState.currentEndTime
+export const selectCurrentBrew = (state) => state.currentState.currentBrew
+export const selectCurrentFlow = (state) => state.currentState.currentFlow
+
+
+
 export default currentStateSlice.reducer
 

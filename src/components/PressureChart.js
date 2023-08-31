@@ -1,97 +1,31 @@
-import ReactApexChart from 'react-apexcharts'
+import { Typography } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { styled } from '@mui/material/styles';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import { selectCurrentPressure, selectCurrentTargetPressure } from '../slices/currentStateSlice';
 
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 10,
+  width: '80%',
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+  }
+}));
 
-var options = {
-  chart: {
-  height: 300,
-  width: "40%",
-  type: 'radialBar',
-  toolbar: {
-    show: false
-  }
-},
-responsive: [
-  {
-    breakpoint: 1000,
-    options: {
-      width: "50%"
-    }
-  }
-],
-plotOptions: {
-  radialBar: {
-    startAngle: -135,
-    endAngle: 225,
-     hollow: {
-      margin: 0,
-      size: '60%',
-      background: '#fff',
-      image: undefined,
-      imageOffsetX: 0,
-      imageOffsetY: 0,
-      position: 'front',
-      dropShadow: {
-        enabled: true,
-        top: 3,
-        left: 0,
-        blur: 4,
-        opacity: 0.24
-      }
-    },
-    track: {
-      background: '#fff',
-      strokeWidth: '67%',
-      margin: 0, // margin is in pixels
-      dropShadow: {
-        enabled: true,
-        top: -3,
-        left: 0,
-        blur: 4,
-        opacity: 0.35
-      }
-    },
-
-    dataLabels: {
-      show: true,
-      name: {
-        offsetY: -10,
-        show: true,
-        color: '#888',
-        fontSize: '8pt'
-      },
-      value: {
-        formatter: function(val) {
-          return (val*15/100).toFixed(2) + " bar";
-        },
-        color: '#111',
-        fontSize: '18pt',
-        show: true,
-      }
-    }
-  }
-},
-fill: {
-  type: 'gradient',
-  gradient: {
-    shade: 'dark',
-    type: 'horizontal',
-    shadeIntensity: 0.5,
-    gradienteFromColors: ['#2d8a16'],
-    gradientToColors: ['#cf2539'],
-    inverseColors: false,
-    opacityFrom: 1,
-    opacityTo: 1,
-    stops: [0, 100]
-  }
-},
-stroke: {
-  lineCap: 'round'
-},
-};
-
-function PressureChart({pressure}) {
-  return(
-    <ReactApexChart options={{...options, labels:['Pressure']}} series={[pressure/15*100]} type="radialBar"/>
+function PressureChart() {
+  const currentPressure = useSelector(selectCurrentPressure)
+  const currentTargetPressure = useSelector(selectCurrentTargetPressure)
+  return(<>
+    <Typography><b>Pressure:</b> </Typography>
+    <BorderLinearProgress variant="determinate" value={currentPressure / 15 * 100} />
+    <Typography>{currentPressure} bar <br /></Typography>
+    <Typography variant='body2'><b>Target:</b> {currentTargetPressure} bar</Typography>
+    </>
   )
 }
 

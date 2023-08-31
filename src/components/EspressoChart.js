@@ -1,24 +1,25 @@
 import React, { useEffect } from 'react'
 import Chart from 'react-apexcharts';
 import { useSelector } from 'react-redux';
-import { updateData } from '../slices/dataSlice'
+import { selectFlow, selectLabels, selectPressure, selectTemperature, selectTime, selectWeight, updateData } from '../slices/dataSlice'
 import { setCurrentTargetPressure } from '../slices/currentStateSlice'
 import { writeTargetPressure } from '../slices/bluetoothSlice'
 import { useDispatch } from 'react-redux';
 function EspressoChart() {
-  const dispatch = useDispatch()
-  const data = useSelector((state) => state.data)
-  const graphSpecs = useSelector((state) => state.graphSpecs)
-  const height = graphSpecs.height
-  const displayYaxisLegend = graphSpecs.displayYaxisLegend
-  // console.log(data)
+  const labels = useSelector(selectLabels)
+  const time = useSelector(selectTime)
+  const pressure = useSelector(selectPressure)
+  const weight = useSelector(selectWeight)
+  const temperature = useSelector(selectTemperature)
+  const flow = useSelector(selectFlow)
+  const {height, displayYaxisLegend} = useSelector((state) => state.graphSpecs)
 
   return (
     <Chart
       options={
         {
           annotations: {
-            xaxis: data.labels
+            xaxis: labels
             
           },
           chart: {
@@ -55,7 +56,7 @@ function EspressoChart() {
           xaxis: {
             type: 'numeric',
             // range: yTempValue.length,
-            categories: data.time
+            categories: time
           },
           yaxis: [
             {
@@ -108,24 +109,24 @@ function EspressoChart() {
       series={[{
         name: 'Pressure',
         type: 'area',
-        data: data.pressure
+        data: pressure
       },
       {
         name: 'Temperature',
         type: 'line',
-        data: data.temperature,
+        data: temperature,
         color: '#cf2539'
       },
       {
         name: 'Weight',
         type: 'line',
-        data: data.weight,
+        data: weight,
         color: '#546E7A'
       },
       {
         name: 'Flow',
         type: 'line',
-        data: data.flow,
+        data: flow,
         color: '#3DD142'
       }
       ]}

@@ -59,5 +59,14 @@ export const dataSlice = createSlice({
 export const { setData, updateData, newData } = dataSlice.actions
 
 export const selectData = (state) => state.data
+export const selectTargetWeight = (state) => state.data.targetWeight
+export const selectTime = state => state.data.time
+export const selectLabels = state => state.data.labels
+export const selectPressure = state => state.data.pressure
+export const selectTemperature = state => state.data.temperature
+export const selectWeight = state => state.data.weight
+export const selectFlow = state => state.data.flow
+export const selectTargetPressure = state => state.data.targetPressure
+export const selectTargetTime = state => state.data.targetTime
 
 export default dataSlice.reducer

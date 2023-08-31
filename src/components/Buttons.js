@@ -2,16 +2,16 @@ import { Button, Grid } from '@mui/material'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { setCurrentStartTime, newData, setCurrentBrew } from '../slices/currentStateSlice'
+import { setCurrentStartTime, newData, setCurrentBrew, selectCurrentBrew } from '../slices/currentStateSlice'
 import BluetoothButton from './BluetoothButton'
 import { toggleBrew } from '../slices/bluetoothSlice'
 
 export function Buttons() {
   const dispatch = useDispatch()
-
   const [demo, setDemo] = useState(false)
-  const { currentBrew, currentPressure, currentTemperature, targetPressure, targetWeight } = useSelector((state) => state.currentState)
+  const currentBrew = useSelector(selectCurrentBrew)
   const {isConnected} = useSelector(state => state.BLE)
+  
   return (
     <Grid container justifyContent="space-around" direction="row" alignItems="center">
       <BluetoothButton />

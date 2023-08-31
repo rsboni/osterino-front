@@ -1,87 +1,30 @@
-import ReactApexChart from 'react-apexcharts'
+import { Typography } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { styled } from '@mui/material/styles';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import { selectCurrentTemperature } from '../slices/currentStateSlice';
 
-
-var options = {
-  chart: {
-  height: 350,
-  type: 'radialBar',
-  toolbar: {
-    show: false
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 10,
+  width: '80%',
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
   }
-},
-plotOptions: {
-  radialBar: {
-    startAngle: -135,
-    endAngle: 225,
-     hollow: {
-      margin: 0,
-      size: '60%',
-      background: '#fff',
-      image: undefined,
-      imageOffsetX: 0,
-      imageOffsetY: 0,
-      position: 'front',
-      dropShadow: {
-        enabled: true,
-        top: 3,
-        left: 0,
-        blur: 4,
-        opacity: 0.24
-      }
-    },
-    track: {
-      background: '#fff',
-      strokeWidth: '67%',
-      margin: 0, // margin is in pixels
-      dropShadow: {
-        enabled: true,
-        top: -3,
-        left: 0,
-        blur: 4,
-        opacity: 0.35
-      }
-    },
+}));
 
-    dataLabels: {
-      show: true,
-      name: {
-        offsetY: -10,
-        show: true,
-        color: '#888',
-        fontSize: '9pt'
-      },
-      value: {
-        formatter: function(val) {
-          return (val*130/100).toFixed(2) + " ºC";
-        },
-        color: '#111',
-        fontSize: '20pt',
-        show: true,
-      }
-    }
-  }
-},
-fill: {
-  type: 'gradient',
-  gradient: {
-    shade: 'dark',
-    type: 'horizontal',
-    shadeIntensity: 0.5,
-    gradientToColors: ['#ABE5A1'],
-    inverseColors: true,
-    opacityFrom: 1,
-    opacityTo: 1,
-    stops: [0, 100]
-  }
-},
-stroke: {
-  lineCap: 'round'
-},
-};
-
-function TempChart({temp}) {
+function TempChart() {
+  const  currentTemperature = useSelector(selectCurrentTemperature)
   return(
-    <ReactApexChart options={{...options, labels:['Temperature']}} series={[temp/130*100]} type="radialBar" />
+   <>
+   <Typography><b>Temperature:</b>
+            <BorderLinearProgress variant="determinate" value={currentTemperature / 130 * 100} />
+            {currentTemperature} ºC</Typography>
+   </>
   )
 }
 

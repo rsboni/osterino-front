@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
-import { updateData } from '../slices/dataSlice'
-import { setCurrentTargetPressure } from '../slices/currentStateSlice'
+import { selectTargetPressure, selectTargetTime, updateData } from '../slices/dataSlice'
+import { selectCurrentBrew, selectCurrentFlow, selectCurrentPressure, selectCurrentStartTime, selectCurrentTargetPressure, selectCurrentTemperature, selectCurrentWeight, setCurrentTargetPressure } from '../slices/currentStateSlice'
 import { writeTargetPressure } from '../slices/bluetoothSlice'
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -8,11 +8,19 @@ import { useSelector } from 'react-redux';
 
 export default function BrewUpdater() {
   const dispatch = useDispatch()
-  const  {currentTargetPressure, currentStartTime, currentTemperature, currentWeight, currentFlow, currentBrew, currentPressure} = useSelector((state => state.currentState))
-  const {targetPressure, targetTime} = useSelector((state) => state.data)
+  const currentTargetPressure = useSelector(selectCurrentTargetPressure)
+  const currentStartTime = useSelector(selectCurrentStartTime)
+  const currentTemperature = useSelector(selectCurrentTemperature)
+  const currentWeight = useSelector(selectCurrentWeight)
+  const currentFlow = useSelector(selectCurrentFlow)
+  const currentBrew = useSelector(selectCurrentBrew)
+  const currentPressure = useSelector(selectCurrentPressure)
+  const targetTime = useSelector(selectTargetTime)
+  const targetPressure = useSelector(selectTargetPressure)
+
   useEffect(() => {
     if (currentBrew) {
-      // const interval = setInterval(() => {
+      const interval = setInterval(() => {
       const t = ((new Date().getTime() - currentStartTime) / 1000)
       if (currentBrew) {
         dispatch(updateData(
@@ -35,10 +43,10 @@ export default function BrewUpdater() {
           }
         }
       }
-      // }, 100);
-      // return () => clearInterval(interval);
+      }, 100);
+      return () => clearInterval(interval);
     }
-  }, [currentBrew, currentFlow, currentPressure, currentStartTime, currentTargetPressure, currentTemperature, currentWeight, dispatch, targetPressure, targetTime]);
+  });
 
 
   return (
