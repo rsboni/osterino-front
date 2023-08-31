@@ -111,6 +111,7 @@ export const toggleBrew = () => (dispatch, getState) => {
       weight: [0],
       flow: [0],
       time: [0],
+      targetWeight: targetWeight
       // targetWeight: targetWeight
     }))
     if (device) {
@@ -136,8 +137,8 @@ export const toggleBrew = () => (dispatch, getState) => {
   }
 }
 
-export const writeTargetPressure = targetPressure => (dispatch, getState) => {
-  characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => { })
+export const writeTargetPressure = targetPressure => async (dispatch, getState) => {
+  characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => console.log("Target Presure changed to: ", targetPressure*10))
     .catch(error => {
       console.log('Argh! ' + error);
     })
@@ -186,7 +187,7 @@ export const connectBluetooth = _ => async (dispatch) => {
           newService.getCharacteristic(BREW_UUID).then(c => c.startNotifications())
             .then(newCharacteristicBrew => {
               newCharacteristicBrew.addEventListener('characteristicvaluechanged', event => {
-                console.log("relay to" + event.target.value.getInt8(0))
+                console.log("Brew Recieved " + event.target.value.getInt8(0))
                 dispatch(stopBrew())
               })
               console.log("Brew BLE characteristic added")
@@ -212,7 +213,7 @@ export const connectBluetooth = _ => async (dispatch) => {
                     .then(
                       newCharacteristicTargetWeight => {
                         newCharacteristicTargetWeight.addEventListener('characteristicvaluechanged', event => {
-                          console.log("Target weight to" + event.target.value.getInt8(0))
+                          console.log("Recieved weight to" + event.target.value.getInt8(0))
 
                         })
                         console.log("Target Weight BLE characteristic added")

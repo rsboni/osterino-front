@@ -12,7 +12,7 @@ export default function BrewUpdater() {
   const {targetPressure, targetTime} = useSelector((state) => state.data)
   useEffect(() => {
     if (currentBrew) {
-      const interval = setInterval(() => {
+      // const interval = setInterval(() => {
       const t = ((new Date().getTime() - currentStartTime) / 1000)
       if (currentBrew) {
         dispatch(updateData(
@@ -30,15 +30,15 @@ export default function BrewUpdater() {
             if (Number(currentTargetPressure) !== Number(targetPressure[i])) {
               dispatch(setCurrentTargetPressure(targetPressure[i]))
               console.log("Setting presure to " + (targetPressure[i] * 10) + "curve=" + targetPressure[i])
-              writeTargetPressure(targetPressure[i])
+              dispatch(writeTargetPressure(targetPressure[i]))
             }
           }
         }
       }
-      }, 100);
-      return () => clearInterval(interval);
+      // }, 100);
+      // return () => clearInterval(interval);
     }
-  }, [currentBrew, currentFlow, currentPressure, currentStartTime, currentTemperature, currentWeight, dispatch, targetPressure, targetTime]);
+  }, [currentBrew, currentFlow, currentPressure, currentStartTime, currentTargetPressure, currentTemperature, currentWeight, dispatch, targetPressure, targetTime]);
 
 
   return (

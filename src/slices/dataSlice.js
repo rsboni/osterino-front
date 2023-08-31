@@ -46,7 +46,7 @@ export const dataSlice = createSlice({
       state.weight = (newData.weight)
       state.flow = (newData.flow)
       state.time = (newData.time)
-      state.targetWeight = newData.weight
+      state.targetWeight = newData.targetWeight
     },
     setTargets: (state, action) => {
       const targets = action.payload
