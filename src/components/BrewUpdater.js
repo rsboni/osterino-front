@@ -37,7 +37,7 @@ export default function BrewUpdater() {
     else if(updateTime >0) setUpdateTime(0);
     if (currentBrew) {
       for (var i = 0; i < targetPressure.length - 1; i++) {
-        if (targetTime[i] <= t && targetTime[i + 1] > t) {
+        if (targetTime[i] <= t && targetTime[i + 1] > t && targetTime[i] > 1) {
           if (Number(currentTargetPressure) !== Number(targetPressure[i])) {
             dispatch(setCurrentTargetPressure(targetPressure[i]))
             console.log("Setting presure to " + (targetPressure[i] * 10) + "curve=" + targetPressure[i])

@@ -127,7 +127,7 @@ export const toggleBrew = () => (dispatch, getState) => {
           characteristicTargetWeight.writeValue(Uint8Array.of(targetWeight)).then(_ => { console.log("Set Weight to = " + targetWeight) })
         }).catch(error => {
           console.log('Argh! in target weight characteristics ' + error);
-        }).then(dispatch(setCurrentBrew(true)))
+        }).then(() => setTimeout(() => { }, 250)).then(dispatch(setCurrentBrew(true)))
     }
   }
   else {
