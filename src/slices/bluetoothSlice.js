@@ -102,7 +102,7 @@ export const toggleBrew = () => (dispatch, getState) => {
   const { currentState, data } = getState()
   // const { device } = BLE
   const { targetWeight } = data
-  const { currentPressure, currentBrew, currentTemperature } = currentState;
+  const { currentPressure, currentBrew, currentTemperature, currentTargetPressure } = currentState;
   if (!currentBrew) {
     console.log("brewing")
     dispatch(setCurrentStartTime(new Date().getTime()))
@@ -117,11 +117,11 @@ export const toggleBrew = () => (dispatch, getState) => {
     }))
     if (device) {
       characteristicBrew.writeValue(Uint8Array.of(1)) //.then(() => setTimeout(() => { }, 100))
-        // .then(_ =>
-        //   characteristicTargetPressure.writeValue(Uint8Array.of(currentTargetPressure * 10)).then(_ => { })
-        //     .catch(error => {
-        //       console.log('Argh! in target pressure characteristics ' + error);
-        //     })
+        .then(_ =>
+          characteristicTargetPressure.writeValue(Uint8Array.of(currentTargetPressure * 10)).then(_ => { })
+            .catch(error => {
+              console.log('Argh! in target pressure characteristics ' + error);
+            }))
         .then(_ => {
           console.log("sending target weight: ", targetWeight)
           characteristicTargetWeight.writeValue(Uint8Array.of(targetWeight)).then(_ => { console.log("Set Weight to = " + targetWeight) })
