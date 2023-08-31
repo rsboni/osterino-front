@@ -18,14 +18,14 @@ export const isWebBluetoothSupported = "bluetooth" in navigator;
 //   const { characteristicTargetWeight, characteristicTargetPressure,characteristicBrew, device  } = useSelector((state) => state.BLE)
 // }
 
-const writeTargetPressure = (pressure, characteristicTargetPressure, device) =>{
-  if (device) {
-    characteristicTargetPressure.writeValue(Uint8Array.of(pressure * 10)).then(_ => { })
-      .catch(error => {
-        console.log('Argh! ' + error);
-      })
-  }
-}
+// const writeTargetPressure = (pressure, characteristicTargetPressure, device) =>{
+//   if (device) {
+//     characteristicTargetPressure.writeValue(Uint8Array.of(pressure * 10)).then(_ => { })
+//       .catch(error => {
+//         console.log('Argh! ' + error);
+//       })
+//   }
+// }
 
 export const ConnectToBluetoothDevice = async () => {
   try {

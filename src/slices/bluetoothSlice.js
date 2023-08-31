@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { setCurrentEndTime, setCurrentStartTime, setCurrentBrew, setCurrentFlow, setCurrentPressure, setCurrentTemperature, setCurrentWeight, setTargetWeight, setCurrentTargetPressure } from './currentStateSlice';
+import { setCurrentEndTime, setCurrentStartTime, setCurrentBrew, setCurrentFlow, setCurrentPressure, setCurrentTemperature, setCurrentWeight, setCurrentTargetPressure } from './currentStateSlice';
 import { newData } from './dataSlice';
 
 const SERVICE_UUID = "381af1eb-b002-4a8e-b698-458841444945";
@@ -99,10 +99,10 @@ export const stopBrew = _ => (dispatch, getState) => {
 }
 
 export const toggleBrew = () => (dispatch, getState) => {
-  const { currentState, data} = getState()
+  const { currentState, data } = getState()
   // const { device } = BLE
-  const {targetWeight } = data
-  const { currentTargetPressure, currentPressure, currentBrew, currentTemperature } = currentState;
+  const { targetWeight } = data
+  const { currentPressure, currentBrew, currentTemperature } = currentState;
   if (!currentBrew) {
     console.log("brewing")
     dispatch(setCurrentStartTime(new Date().getTime()))
@@ -116,21 +116,19 @@ export const toggleBrew = () => (dispatch, getState) => {
       // targetWeight: targetWeight
     }))
     if (device) {
-      characteristicBrew.writeValue(Uint8Array.of(1))
+      characteristicBrew.writeValue(Uint8Array.of(1)) //.then(() => setTimeout(() => { }, 100))
         // .then(_ =>
         //   characteristicTargetPressure.writeValue(Uint8Array.of(currentTargetPressure * 10)).then(_ => { })
         //     .catch(error => {
         //       console.log('Argh! in target pressure characteristics ' + error);
         //     })
-            .then(_ =>{
-              console.log("sending target weight: ", targetWeight )
-              characteristicTargetWeight.writeValue(Uint8Array.of(targetWeight)).then(_ => { console.log("Set Weight to = " + targetWeight) })
-            }).catch(error => {
-                  console.log('Argh! in target weight characteristics ' + error);
-                })
+        .then(_ => {
+          console.log("sending target weight: ", targetWeight)
+          characteristicTargetWeight.writeValue(Uint8Array.of(targetWeight)).then(_ => { console.log("Set Weight to = " + targetWeight) })
+        }).catch(error => {
+          console.log('Argh! in target weight characteristics ' + error);
+        }).then(dispatch(setCurrentBrew(true)))
     }
-    dispatch(setCurrentBrew(true))
-
   }
   else {
     dispatch(stopBrew())
@@ -138,7 +136,7 @@ export const toggleBrew = () => (dispatch, getState) => {
 }
 
 export const writeTargetPressure = targetPressure => async (dispatch, getState) => {
-  characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => console.log("Target Presure changed to: ", targetPressure*10))
+  characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => console.log("Target Presure changed to: ", targetPressure * 10))
     .catch(error => {
       console.log('Argh! ' + error);
     })
