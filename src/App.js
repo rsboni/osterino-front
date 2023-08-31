@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import './App.css';
 import {
@@ -27,11 +28,16 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Bluetooth, Coffee, Settings, SsidChart, Water } from '@mui/icons-material';
 import { profileMap } from './utils/profileCalculator';
-import { profiles } from './utils/profiles';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { setData, updateData, newData } from './slices/dataSlice';
+import { setSpecs } from './slices/graphSpecsSlice';
+import { setTargetPressure, setCurrentEndTime, setCurrentPressure, setCurrentStartTime, setCurrentTemperature, setCurrentFlow, setCurrentBrew, setCurrentWeight, setCurrentManualBrew } from './slices/currentStateSlice';
+import BrewUpdater from './components/BrewUpdater';
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -99,33 +105,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-
-
 function App() {
-  const [defaultData, labelsDefault] = profileMap(profiles[8])
-  
   const theme = useTheme();
-  const [targetPressureCurve, setTargetPressureCurve] = useState(defaultData.pressure)
-  const [targetTime, setTargetTime] = useState(defaultData.time)
-  const [targetWeight, setTargetWeight] = useState(40);
-  const [manualBrew, setManualBrew] = useState(false);
+  // const [defaultData] = profileMap(profiles[8])
+  const dispatch = useDispatch()
+  
   const [selectedPage, setSelectedPage] = useState("dashboard")
-  const [currentTemperature, setCurrentTemperature] = useState(96)
-  const [currentPressure, setCurrentPressure] = useState(9)
-  const [weight, setWeight] = useState(0)
-  const [flow, setFlow] = useState(0)
-  const [device, setDevice] = useState(undefined)
-  const [data, setData] = useState(defaultData)
-  const [labels, setLabels] = useState(labelsDefault)
-  const [isBrewing, setIsBrewing] = useState(false)
-  const [startTime, setStartTime] = useState(0)
-  const [endTime, setEndTime] = useState(0)
-  const [demo, setDemo] = useState(false)
-  const [characteristicBrew, setCharacteristicBrew] = useState(undefined)
-  const [characteristicTargetPressure, setCharacteristicTargetPressure] = useState(undefined)
-  const [characteristicTargetWeight, setCharacteristicTargetWeight] = useState(undefined)
-  const [targetPressure, setTargetPressure] = useState(9);
   const [open, setOpen] = useState(false);
+  // let characteristicTargetWeight, characteristicTargetPressure, characteristicBrew, device = undefined
+  
+  // const { currentBrew, currentWeight, currentPressure, currentTemperature, currentFlow, currentStartTime, currentEndTime, targetPressure, targetWeight, manualBrew } = currentState
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -135,113 +125,13 @@ function App() {
   };
 
   const setProfile = (profile) => {
-    const [data, labels] = profileMap(profile)
-      setData(data)
-      setLabels(labels)
-      setSelectedPage("dashboard")
-      setTargetTime(data.time)
-      setTargetPressureCurve(data.pressure)
-      setTargetWeight(parseInt(profile.target_weight))
-    }
-
-  const toggleBrew = () => {
-    if (!isBrewing) {
-      console.log("brewing")
-      setStartTime(new Date().getTime())
-      setData(data => {
-        const newData = data
-        newData.pressure=[currentPressure]
-        newData.temperature=[currentTemperature]
-        newData.weight=[0]
-        newData.flow=[0]
-        newData.time=[0]
-        return newData
-      })
-      
-      if (device) {
-        characteristicBrew.writeValue(Uint8Array.of(1)).then(_ => { })
-          .catch(error => {
-            console.log('Argh! in brew characteristics ' + error);
-          }).then(_ => 
-        characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => {})
-          .catch(error => {
-            console.log('Argh! in target pressure characteristics ' + error);
-          }).then(_=>
-        characteristicTargetWeight.writeValue(Uint8Array.of(targetWeight)).then(_ => { console.log("Set Weight to = " + targetWeight) })
-          .catch(error => {
-            console.log('Argh! in target weight characteristics ' + error);
-          })))
-      }
-    setIsBrewing(true) 
-
-    }
-    else {
-      stopBrew()
-    }
-  }
-
-  const stopBrew = () => {
-    console.log("stopped brewing")
-      setEndTime(new Date().getTime())
-      if (device) {
-        characteristicBrew.writeValue(Uint8Array.of(0)).then(_ => { })
-          .catch(error => {
-            console.log('Argh! ' + error);
-          })
-      }
-      setIsBrewing(false);
-  }
-
-  useEffect(() => {
-    if (isBrewing) {
-      const interval = setInterval(() => {
-        const t = ((new Date().getTime() - startTime) / 1000)
-        if (isBrewing) {
-          setData(data => {
-            const newData = data
-            newData.pressure.push(currentPressure)
-            newData.temperature.push(currentTemperature)
-            newData.weight.push(weight)
-            newData.flow.push(flow)
-            newData.time.push(t)
-            return newData
-          })
-          // console.log("Pressure: " + currentPressure + "Weight: " + weight + "TargetPressure: " + targetPressure);
-
-        }
-        if (!manualBrew) {
-          for (var i = 0; i < targetPressureCurve.length - 1; i++) {
-            if (targetTime[i] <= t && targetTime[i + 1] > t) {
-              if (targetPressure !== targetPressureCurve[i]) {
-                setTargetPressure(targetPressureCurve[i])
-                console.log("Setting presure to " + (targetPressureCurve[i] * 10) + "curve=" + targetPressureCurve[i] + " target:" + targetPressure)
-                characteristicTargetPressure.writeValue(Uint8Array.of(targetPressureCurve[i] * 10)).then(_ => { })
-                  .catch(error => {
-                    console.log('Argh! ' + error);
-                  })
-              }
-
-
-            }
-
-          }
-        }
-      }, 100);
-      return () => clearInterval(interval);
-    }
-  });
-
-
-  const targetPressureChange = async (e) => {
-    // setManualBrew(true);
-    setTargetPressure(e.target.value);
-    console.log("target pressure = " + targetPressure)
-    if (device) {
-      characteristicTargetPressure.writeValue(Uint8Array.of(targetPressure * 10)).then(_ => { })
-        .catch(error => {
-          console.log('Argh! ' + error);
-        })
-    }
+    dispatch(setData(profile))
+    setSelectedPage("dashboard")
+    // dispatch(setTargetWeight(parseInt(profile.target_weight)))
+    dispatch(setSpecs({
+      height: '450px',
+      displayYaxisLegend: true
+    }))
   }
 
   const TEMP_UUID = "22cf5e58-b119-4da5-8341-56cc2378f406";
@@ -252,121 +142,6 @@ function App() {
   const FLOW_UUID = "3a19025c-0dc3-492c-ae05-db00dfad91cd";
   const TARGET_WEIGHT_UUID = "9414b5a6-fcb2-492d-8023-e34348fa7870";
 
-
-  const onClick = async () => {
-    try {
-      const { device } = await connectToBluetoothDevice()
-      setDevice(device)
-      await connectToService();
-      const service = window.mservice;
-      service.getCharacteristic(TEMP_UUID).then(c => c.startNotifications()).then(characteristic => {
-        characteristic.addEventListener('characteristicvaluechanged', event => {
-          const { value } = event.target
-          var currentTemperature1 = ''
-          for (var i = 0; i < value.byteLength; i++) {
-            currentTemperature1 += String.fromCharCode(value.getInt8(i))
-          }
-          setCurrentTemperature((currentTemperature1 / 100).toFixed(2))
-        })
-        console.log("Temperature characteristic added")
-      }).then(_ =>
-
-        service.getCharacteristic(WEIGHT_UUID).then(c => c.startNotifications()).then(characteristic => {
-          characteristic.addEventListener('characteristicvaluechanged', event => {
-            const { value } = event.target
-            var weightState = ''
-            for (var i = 0; i < value.byteLength; i++) {
-              weightState += String.fromCharCode(value.getInt8(i))
-            }
-            setWeight((weightState / 100).toFixed(1))
-          })
-          console.log("Weight characteristic added")
-        })).then(_ =>
-
-
-          service.getCharacteristic(BREW_UUID).then(c => c.startNotifications())
-            .then(characteristicBrew => {
-              characteristicBrew.addEventListener('characteristicvaluechanged', event => {
-                console.log("relay to" + event.target.value.getInt8(0))
-                stopBrew();
-              })
-              console.log("Brew BLE characteristic added")
-              setCharacteristicBrew(characteristicBrew)
-              return characteristicBrew;
-            })
-            .then(_ =>
-              service.getCharacteristic(TARGET_PRESSURE_UUID).then(c => c.startNotifications())
-                .then(
-                  characteristicTargetPressure => {
-                    characteristicTargetPressure.addEventListener('characteristicvaluechanged', event => {
-                      console.log("pressure to" + event.target.value.getInt8(0))
-                    })
-                    console.log("Target Pressure BLE characteristic added")
-                    setCharacteristicTargetPressure(characteristicTargetPressure)
-                    return characteristicTargetPressure;
-                  }
-                ).then(_ =>
-              service.getCharacteristic(TARGET_WEIGHT_UUID).then(c => c.startNotifications())
-                .then(
-                  characteristicTargetWeight => {
-                    characteristicTargetWeight.addEventListener('characteristicvaluechanged', event => {
-                      console.log("Target weight to" + event.target.value.getInt8(0))
-
-                    })
-                    console.log("Target Weight BLE characteristic added")
-                    setCharacteristicTargetWeight(characteristicTargetWeight)
-                    return characteristicTargetWeight;
-                  }
-                )
-                .then(_ =>
-                  service.getCharacteristic(FLOW_UUID).then(c => c.startNotifications())
-                    .then(characteristicFlow => {
-                      characteristicFlow.addEventListener('characteristicvaluechanged', event => {
-                        const { value } = event.target
-                        var flow = ''
-                        for (var i = 0; i < value.byteLength; i++) {
-                          flow += String.fromCharCode(value.getInt8(i))
-                        }
-                        setFlow((flow / 100).toFixed(1))
-                      })
-                      console.log("Flow BLE characteristic added")
-                    })
-                    .then(_ =>
-                      service.getCharacteristic(PRESSURE_UUID).then(c => c.startNotifications())
-                        .then(
-                          characteristicPressure => {
-                            characteristicPressure.addEventListener('characteristicvaluechanged', event => {
-                              const { value } = event.target
-                              var pressure = ''
-                              for (var i = 0; i < value.byteLength; i++) {
-                                pressure += String.fromCharCode(value.getInt8(i))
-                              }
-                              setCurrentPressure((pressure / 100).toFixed(2))
-                            })
-                            console.log("Pressure BLE characteristic added")
-                          }
-                        )
-                        .catch(e => console.log(e)))))))
-
-      device.addEventListener('gattserverdisconnected', () => {
-        disconnectFromBluetoothDevice(device)
-        setDevice(null)
-      })
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const disconnect = async () => {
-    try {
-      setDevice(null)
-      return await disconnectFromBluetoothDevice(device);
-    }
-    catch (e) {
-      console.log(e)
-      return e
-    }
-  }
   return (
 
 
@@ -406,7 +181,13 @@ function App() {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
-              onClick={() => setSelectedPage("dashboard")}
+              onClick={() => {
+                setSelectedPage("dashboard")
+                dispatch(setSpecs({
+                  height: '450px',
+                  displayYaxisLegend: true
+                }))
+              }}
             >
               <ListItemIcon
                 sx={{
@@ -447,7 +228,13 @@ function App() {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
-              onClick={() => setSelectedPage("profiles")}
+              onClick={() => {
+                setSelectedPage("profiles")
+                dispatch(setSpecs({
+                  height: '200px',
+                  displayYaxisLegend: false
+                }))
+              }}
 
             >
               <ListItemIcon
@@ -511,17 +298,18 @@ function App() {
         <DrawerHeader />
         <Grid container spacing={1}>
           {selectedPage === "dashboard" ? <>
-            <Dashboard props={[data, labels, targetPressureChange, currentTemperature, currentPressure, startTime, endTime, isBrewing, targetPressure, weight, targetWeight]} />
-            <Buttons props={[disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo]} /></>
+            <Dashboard />
+            <Buttons /></>
             : selectedPage === "profiles" ?
-              <Profilling setProfile={setProfile}/> :
+              <Profilling setProfile={setProfile} /> :
               ""}
         </Grid>
       </Box>
+      <BrewUpdater /> 
     </Box>
   )
 }
 
-const AppMemo = React.memo(App)
+// const AppMemo = React.memo(App)
 
-export default AppMemo;
+export default React.memo(App);

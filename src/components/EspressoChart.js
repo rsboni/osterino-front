@@ -1,14 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Chart from 'react-apexcharts';
+import { useSelector } from 'react-redux';
+import { updateData } from '../slices/dataSlice'
+import { setCurrentTargetPressure } from '../slices/currentStateSlice'
+import { writeTargetPressure } from '../slices/bluetoothSlice'
+import { useDispatch } from 'react-redux';
+function EspressoChart() {
+  const dispatch = useDispatch()
+  const data = useSelector((state) => state.data)
+  const graphSpecs = useSelector((state) => state.graphSpecs)
+  const height = graphSpecs.height
+  const displayYaxisLegend = graphSpecs.displayYaxisLegend
+  // console.log(data)
 
-export default function EspressoChart({ props }) {
-  const [data, labels = [], displayYaxisLegend = true, height = '450px'] = props
   return (
     <Chart
       options={
         {
           annotations: {
-            xaxis: labels
+            xaxis: data.labels
             
           },
           chart: {
@@ -124,3 +134,5 @@ export default function EspressoChart({ props }) {
     />
   )
 }
+
+export default React.memo(EspressoChart)

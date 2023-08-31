@@ -1,49 +1,32 @@
 import { Button, Grid } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { setCurrentStartTime, newData, setCurrentBrew } from '../slices/currentStateSlice'
+import BluetoothButton from './BluetoothButton'
+import { toggleBrew } from '../slices/bluetoothSlice'
 
-export default function Buttons({ props }) {
-  const [disconnect, onClick, setDemo, toggleBrew, device, isBrewing, demo] = props
+export function Buttons() {
+  const dispatch = useDispatch()
 
+  const [demo, setDemo] = useState(false)
+  const { currentBrew, currentPressure, currentTemperature, targetPressure, targetWeight } = useSelector((state) => state.currentState)
+  const {isConnected} = useSelector(state => state.BLE)
   return (
     <Grid container justifyContent="space-around" direction="row" alignItems="center">
-      <Grid item xs={12} sm={3}>
-        {device ? (
-          <Button
-            fullWidth
-            variant='contained'
-            size='large'
-            className='button'
-            color='primary'
-            onClick={() => disconnect()}
-            spacing={2}
-          >
-            DISCONNECT
-          </Button>
-        ) : (
-          <Button
-            fullWidth
-            variant='contained'
-            size='large'
-            className='button'
-            color='primary'
-            onClick={() => onClick()}
-          >
-            CONNECT
-          </Button>
-        )}
-      </Grid>
+      <BluetoothButton />
       <Grid item xs={12} sm={3} >
-        {device ?
+        {isConnected ?
           <Button
             fullWidth
             variant='contained'
             size='large'
             className='button'
-            color={!isBrewing ? ('success') : ('error')}
-            onClick={() => toggleBrew()}
+            color={!currentBrew ? ('success') : ('error')}
+            onClick={() => dispatch(toggleBrew())}
 
           >
-            {!isBrewing ? ("BREW") : ("STOP")}
+            {!currentBrew ? ("BREW") : ("STOP")}
           </Button>
           : <Button
             fullWidth
@@ -61,3 +44,5 @@ export default function Buttons({ props }) {
     </Grid>
   )
 }
+
+export default React.memo(Buttons)

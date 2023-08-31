@@ -1,3 +1,5 @@
+import { useSelector } from "react-redux";
+
 const SERVICE_UUID = "381af1eb-b002-4a8e-b698-458841444945";
 const TEMP_UUID = "22cf5e58-b119-4da5-8341-56cc2378f406";
 const PRESSURE_UUID = "07a62719-c9c0-442f-af6c-336e8839469c";
@@ -6,11 +8,27 @@ const TARGET_PRESSURE_UUID = "202c8717-9005-4eb3-876a-70f977a89c72";
 const WEIGHT_UUID = "8fe6deb9-02f5-4dbd-9bec-1b7291a9ba5a";
 
 
+
+// let characteristicTargetWeight, characteristicTargetPressure, characteristicBrew, device = undefined
+
 export const isWebBluetoothSupported = "bluetooth" in navigator;
 
-export const connectToBluetoothDevice = async () => {
+// export const BluetoothHelpers = () =>{
+//   const { currentBrew, currentWeight, currentPressure, currentTemperature, currentFlow, currentStartTime, currentEndTime, targetPressure, targetWeight, manualBrew } = useSelector((state) => state.currentState)
+//   const { characteristicTargetWeight, characteristicTargetPressure,characteristicBrew, device  } = useSelector((state) => state.BLE)
+// }
+
+const writeTargetPressure = (pressure, characteristicTargetPressure, device) =>{
+  if (device) {
+    characteristicTargetPressure.writeValue(Uint8Array.of(pressure * 10)).then(_ => { })
+      .catch(error => {
+        console.log('Argh! ' + error);
+      })
+  }
+}
+
+export const ConnectToBluetoothDevice = async () => {
   try {
-    console.log("Bluetooth supported: ", isWebBluetoothSupported)
     const device = await navigator.bluetooth.requestDevice({
       filters: [{
         services: [SERVICE_UUID],
@@ -18,8 +36,7 @@ export const connectToBluetoothDevice = async () => {
     })
     const server = await device.gatt.connect()
     window.mdevice = device;
-    window.mserver = server;
-
+    window.mserver = server;    
     return { device, server };
   } catch (err) {
     console.log(err)
@@ -32,6 +49,7 @@ export const connectToService = async () => {
   server.getPrimaryService(SERVICE_UUID);
   const service = await server.getPrimaryService(SERVICE_UUID);
   window.mservice = service;
+  return service
 }
 
 export const startNotificationsTemperature = async () => {

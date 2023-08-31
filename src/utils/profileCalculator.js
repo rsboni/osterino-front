@@ -22,15 +22,15 @@ export const xCalcultaor = (start, end, step = 0.5) => {
 
 export const profileMap = (profile) => {
   let t = 0
-  const data = {time:[],temperature:[],flow:[],pressure:[],}
-  let labels = []
+  const data = {time:[],temperature:[],flow:[],pressure:[],weight: 0, labels:[]}
+  data.weight = profile.target_weight
   profile.steps.forEach((step, index, array) => {
     const duration = parseFloat(step.seconds)
     const temperature = parseFloat(step.temperature ??= 0)
     const flow = parseFloat(step.flow ??= 0)
     const pressure = parseFloat(step.pressure ??= 0)
     const previousPressure = parseFloat(array[index === 0 ? 0 : index - 1].pressure)
-    if (duration > 4) labels.push({
+    if (duration > 4) data.labels.push({
       x: t,
       label: {
         text: step.name,
@@ -43,5 +43,5 @@ export const profileMap = (profile) => {
     t = t + duration
   });
 
-  return [data, labels]
+  return [data]
 }

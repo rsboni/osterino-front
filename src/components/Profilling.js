@@ -6,12 +6,19 @@ import ListItemText from '@mui/material/ListItemText';
 import { profiles } from '../utils/profiles';
 import ProfileCard from './ProfileCard';
 import { Button } from '@mui/material';
+import { setData } from '../slices/dataSlice';
+import { useDispatch } from 'react-redux';
+
+
+
 export default function Profilling(props) {
   const {setProfile} = props
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
-
+  
+  const dispatch = useDispatch();
+  const [ selectedIndex, setSelectedIndex] = React.useState(0)
   const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
+    setSelectedIndex(index)
+    dispatch(setData(profiles[index]))
   };
   return (<Box sx={{display: 'flex', height:'85vh'}}>
     <Box sx={{ width: '40%', overflow:'auto', maxWidth: 360, height: '100%', bgcolor: 'background.paper' }}>
