@@ -1,10 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Chart from 'react-apexcharts';
 import { useSelector } from 'react-redux';
-import { selectFlow, selectLabels, selectPressure, selectTemperature, selectTime, selectWeight, updateData } from '../slices/dataSlice'
-import { setCurrentTargetPressure } from '../slices/currentStateSlice'
-import { writeTargetPressure } from '../slices/bluetoothSlice'
-import { useDispatch } from 'react-redux';
+import { selectFlow, selectLabels, selectPressure, selectTemperature, selectTime, selectWeight } from '../slices/dataSlice'
 function EspressoChart() {
   const labels = useSelector(selectLabels)
   const time = useSelector(selectTime)
@@ -13,7 +10,6 @@ function EspressoChart() {
   const temperature = useSelector(selectTemperature)
   const flow = useSelector(selectFlow)
   const {height, displayYaxisLegend} = useSelector((state) => state.graphSpecs)
-
   return (
     <Chart
       options={

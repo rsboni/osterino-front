@@ -2,7 +2,6 @@ import { Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
-import { selectCurrentBrew, selectCurrentEndTime, selectCurrentStartTime } from '../slices/currentStateSlice';
 import { selectTime } from '../slices/dataSlice';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -20,15 +19,12 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 
 function TimeChart() {
-  const currentStartTime = useSelector(selectCurrentStartTime)
-  const currentBrew = useSelector(selectCurrentBrew)
-  const currentEndTime = useSelector(selectCurrentEndTime)
   const time = useSelector(selectTime)
   
   return(
     <> <Typography><b>Time:</b></Typography>
-    <BorderLinearProgress variant="determinate" value={(currentStartTime && currentBrew ? Math.floor((new Date().getTime() - currentStartTime) / 1000) : currentStartTime && !currentBrew ? Math.floor((currentEndTime - currentStartTime) / 1000) : time[time.length - 1]) / 100 * 100} />
-    <Typography>{currentStartTime && currentBrew ? Math.floor((new Date().getTime() - currentStartTime) / 1000) : currentStartTime && !currentBrew ? Math.floor((currentEndTime - currentStartTime) / 1000) : 0} sec</Typography>
+    <BorderLinearProgress variant="determinate" value={time[time.length - 1]} />
+    <Typography>{time[time.length -1].toFixed(0)} sec</Typography>
     </>)
 }
 
