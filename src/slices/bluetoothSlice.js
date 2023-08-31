@@ -187,7 +187,7 @@ export const connectBluetooth = _ => async (dispatch) => {
             .then(newCharacteristicBrew => {
               newCharacteristicBrew.addEventListener('characteristicvaluechanged', event => {
                 console.log("relay to" + event.target.value.getInt8(0))
-                stopBrew();
+                dispatch(stopBrew())
               })
               console.log("Brew BLE characteristic added")
               characteristicBrew = newCharacteristicBrew
