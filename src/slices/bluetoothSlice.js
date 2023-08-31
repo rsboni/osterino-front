@@ -116,7 +116,7 @@ export const toggleBrew = () => (dispatch, getState) => {
       // targetWeight: targetWeight
     }))
     if (device) {
-      characteristicBrew.writeValue(Uint8Array.of(1)) //.then(() => setTimeout(() => { }, 100))
+      characteristicBrew.writeValue(Uint8Array.of(1)).then(() => setTimeout(() => { }, 150))
         .then(_ =>
           characteristicTargetPressure.writeValue(Uint8Array.of(currentTargetPressure * 10)).then(_ => { })
             .catch(error => {
