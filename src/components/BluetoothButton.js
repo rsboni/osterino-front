@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
 import { Grid, Button } from '@mui/material'
 import { connectBluetooth, disconnectBluetooth } from '../slices/bluetoothSlice'
 
 export default function BluetoothButton() {
   const dispatch = useDispatch()
   const { isConnected } = useSelector((state) => state.BLE)
-
-  // const 
 
   return (
     <Grid item xs={12} sm={3}>

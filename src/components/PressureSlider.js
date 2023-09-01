@@ -5,7 +5,6 @@ import { setCurrentTargetPressure, setCurrentManualBrew } from '../slices/curren
 import { writeTargetPressure } from '../slices/bluetoothSlice';
 import { selectCurrentTargetPresure } from '../slices/currentStateSlice';
 
-
 export default function PressureSlider() {
   const dispatch = useDispatch()
   const currentTargetPressure = useSelector(selectCurrentTargetPresure)
@@ -17,7 +16,6 @@ export default function PressureSlider() {
   }
 
   const targetPressureChange = async (e) => {
-    // setManualBrew(true);
     dispatch(setCurrentTargetPressure(e.target.value))
     dispatch(setCurrentManualBrew(true))
     console.log("target pressure = " + e.target.value)
@@ -31,7 +29,6 @@ export default function PressureSlider() {
                 },
               }}
               orientation="vertical"
-              // defaultValue={9}
               value={currentTargetPressure}
               onChange={targetPressureChange}
               min={0}

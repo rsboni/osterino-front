@@ -9,8 +9,6 @@ import { Button } from '@mui/material';
 import { setData } from '../slices/dataSlice';
 import { useDispatch } from 'react-redux';
 
-
-
 export default function Profilling(props) {
   const {setProfile} = props
   

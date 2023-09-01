@@ -5,7 +5,6 @@ import { writeTargetPressure } from '../slices/bluetoothSlice'
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
-
 export default function BrewUpdater() {
   const dispatch = useDispatch()
   const [updateTime, setUpdateTime] = useState(0)
@@ -55,8 +54,7 @@ export default function BrewUpdater() {
       return () => clearInterval(interval);
   });
 
-
   return (
-    <div></div>
+    <></>
   )
 }

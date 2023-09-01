@@ -1,11 +1,6 @@
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import './App.css';
-import {
-  connectToBluetoothDevice,
-  connectToService,
-  disconnectFromBluetoothDevice
-} from './bluetooth'
 import { Grid, Typography } from '@mui/material'
 import Buttons from './components/Buttons';
 import Dashboard from './components/Dashboard';
@@ -27,15 +22,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Bluetooth, Coffee, Settings, SsidChart, Water } from '@mui/icons-material';
-import { profileMap } from './utils/profileCalculator';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { setData, updateData, newData } from './slices/dataSlice';
+import { useDispatch } from 'react-redux';
+import { setData } from './slices/dataSlice';
 import { setSpecs } from './slices/graphSpecsSlice';
-import { setTargetPressure, setCurrentEndTime, setCurrentPressure, setCurrentStartTime, setCurrentTemperature, setCurrentFlow, setCurrentBrew, setCurrentWeight, setCurrentManualBrew } from './slices/currentStateSlice';
 import BrewUpdater from './components/BrewUpdater';
 
 const drawerWidth = 240;
@@ -107,15 +100,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 function App() {
   const theme = useTheme();
-  // const [defaultData] = profileMap(profiles[8])
   const dispatch = useDispatch()
-  
+
   const [selectedPage, setSelectedPage] = useState("dashboard")
   const [open, setOpen] = useState(false);
-  // let characteristicTargetWeight, characteristicTargetPressure, characteristicBrew, device = undefined
-  
-  // const { currentBrew, currentWeight, currentPressure, currentTemperature, currentFlow, currentStartTime, currentEndTime, targetPressure, targetWeight, manualBrew } = currentState
-  
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -127,24 +116,13 @@ function App() {
   const setProfile = (profile) => {
     dispatch(setData(profile))
     setSelectedPage("dashboard")
-    // dispatch(setTargetWeight(parseInt(profile.target_weight)))
     dispatch(setSpecs({
       height: '450px',
       displayYaxisLegend: true
     }))
   }
 
-  const TEMP_UUID = "22cf5e58-b119-4da5-8341-56cc2378f406";
-  const PRESSURE_UUID = "07a62719-c9c0-442f-af6c-336e8839469c";
-  const BREW_UUID = "0ddcee2d-4a38-46a3-9054-04691f5a7e26";
-  const TARGET_PRESSURE_UUID = "202c8717-9005-4eb3-876a-70f977a89c72";
-  const WEIGHT_UUID = "8fe6deb9-02f5-4dbd-9bec-1b7291a9ba5a";
-  const FLOW_UUID = "3a19025c-0dc3-492c-ae05-db00dfad91cd";
-  const TARGET_WEIGHT_UUID = "9414b5a6-fcb2-492d-8023-e34348fa7870";
-
   return (
-
-
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
@@ -294,22 +272,20 @@ function App() {
           </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, height: "auto" }}>
         <DrawerHeader />
-        <Grid container spacing={1}>
-          {selectedPage === "dashboard" ? <>
+        {selectedPage === "dashboard" ?
+          <Grid container spacing={2} rowSpacing={2} justifyContent="stretch" direction="column" alignItems="center" >
             <Dashboard />
-            <Buttons /></>
-            : selectedPage === "profiles" ?
-              <Profilling setProfile={setProfile} /> :
-              ""}
-        </Grid>
+            <Buttons />
+          </Grid>
+          : selectedPage === "profiles" ?
+            <Profilling setProfile={setProfile} /> :
+            ""}
       </Box>
-      <BrewUpdater /> 
-    </Box>
+      <BrewUpdater />
+    </Box >
   )
 }
-
-// const AppMemo = React.memo(App)
 
 export default React.memo(App);

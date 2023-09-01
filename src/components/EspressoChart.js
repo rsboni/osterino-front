@@ -41,7 +41,9 @@ function EspressoChart() {
             enabled: false
           },
           stroke: {
-            curve: 'smooth'
+          //   // width: [5, 7, 5],
+          //   dashArray: [0, 8, 5],
+            curve: 'smooth',
           },
           title: {
             show: false
@@ -51,7 +53,6 @@ function EspressoChart() {
           },
           xaxis: {
             type: 'numeric',
-            // range: yTempValue.length,
             categories: time
           },
           yaxis: [

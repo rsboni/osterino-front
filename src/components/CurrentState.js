@@ -1,9 +1,9 @@
 import React from 'react'
 import { Grid } from '@mui/material';
-import TempChart from './TempChart'
-import WeightChart from './WeightChart';
-import PressureChart from './PressureChart';
-import TimeChart from './TimeChart';
+import TempChart from './LinearCharts/TempChart'
+import WeightChart from './LinearCharts/WeightChart';
+import PressureChart from './LinearCharts/PressureChart';
+import TimeChart from './LinearCharts/TimeChart';
 
 export default function CurrentState() {
   return (
@@ -17,7 +17,7 @@ export default function CurrentState() {
       <Grid item xs={12} sm={3} >
         <TimeChart />
       </Grid>
-      <Grid item xs={12} sm={3} justifyContent="flex-end" direction="row">
+      <Grid item xs={12} sm={3} justifyContent="flex-end">
         <WeightChart />
       </Grid>
     </Grid>

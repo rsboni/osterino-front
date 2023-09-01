@@ -2,7 +2,7 @@ import { Button, Grid } from '@mui/material'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { setCurrentStartTime, newData, setCurrentBrew, selectCurrentBrew } from '../slices/currentStateSlice'
+import {selectCurrentBrew } from '../slices/currentStateSlice'
 import BluetoothButton from './BluetoothButton'
 import { toggleBrew } from '../slices/bluetoothSlice'
 
@@ -24,7 +24,6 @@ export function Buttons() {
             className='button'
             color={!currentBrew ? ('success') : ('error')}
             onClick={() => dispatch(toggleBrew())}
-
           >
             {!currentBrew ? ("BREW") : ("STOP")}
           </Button>
