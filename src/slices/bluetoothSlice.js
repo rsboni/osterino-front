@@ -145,7 +145,7 @@ export const writeTargetPressure = targetPressure => async (dispatch, getState) 
 }
 
 export const writeTargetTemperature = targetTemp => async (dispatch, getState) => {
-  characteristicTargetTemperature.writeValue(Uint8Array.of(targetTemp * 10)).then(_ => console.log("Target Temperature changed to: ", targetTemp * 10))
+  characteristicTargetTemperature.writeValue(Uint8Array.of(targetTemp)).then(_ => console.log("Target Temperature changed to: ", targetTemp * 10))
     .catch(error => {
       console.log('Argh! ' + error);
     })
@@ -225,6 +225,7 @@ export const connectBluetooth = _ => async (dispatch) => {
                     })
                     console.log("Target Temperature BLE characteristic added")
                     characteristicTargetTemperature = newCharacteristicTargetTemperature
+                    return newService
                   }
                 ).then(newService =>
                   newService.getCharacteristic(TARGET_WEIGHT_UUID).then(c => c.startNotifications())

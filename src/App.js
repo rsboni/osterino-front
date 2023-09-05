@@ -164,7 +164,7 @@ function App() {
               }}
               onClick={() => {
                 setSelectedPage("dashboard")
-                dispatch(writeTargetTemperature(104))
+                dispatch(writeTargetTemperature(104*10))
                 dispatch(setSpecs({
                   height: '450px',
                   displayYaxisLegend: true
