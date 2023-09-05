@@ -11,6 +11,7 @@ export const currentStateSlice = createSlice({
     currentStartTime: 0,
     currentEndTime: 0,
     currentTargetPressure: 0,
+    currentTargetTemperature : 0,
     manualBrew: false,
   },
   reducers: {
@@ -48,6 +49,9 @@ export const currentStateSlice = createSlice({
     },
     setCurrentTargetPressure: (state, action) => {
       state.currentTargetPressure = Number(action.payload)
+    },
+    setCurrentTargetTemperature: (state, action) => {
+      state.currentTargetTemperature = Number(action.payload)
     },
     
   },

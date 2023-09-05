@@ -30,6 +30,9 @@ import { useDispatch } from 'react-redux';
 import { setData } from './slices/dataSlice';
 import { setSpecs } from './slices/graphSpecsSlice';
 import BrewUpdater from './components/BrewUpdater';
+import Steam from './components/Steam';
+import SettingsPage from './components/SettingsPage';
+import { writeTargetTemperature } from './slices/bluetoothSlice';
 
 const drawerWidth = 240;
 
@@ -161,6 +164,7 @@ function App() {
               }}
               onClick={() => {
                 setSelectedPage("dashboard")
+                dispatch(writeTargetTemperature(104))
                 dispatch(setSpecs({
                   height: '450px',
                   displayYaxisLegend: true
@@ -185,6 +189,9 @@ function App() {
                 minHeight: 48,
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
+              }}
+              onClick={() => {
+                setSelectedPage("steam")               
               }}
             >
               <ListItemIcon
@@ -237,6 +244,9 @@ function App() {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
+              onClick={() => {
+                setSelectedPage("settings")
+              }}
             >
               <ListItemIcon
                 sx={{
@@ -281,6 +291,10 @@ function App() {
           </Grid>
           : selectedPage === "profiles" ?
             <Profilling setProfile={setProfile} /> :
+            selectedPage === "steam" ?
+            <Steam />:
+            selectedPage === "settings" ?
+            <SettingsPage /> :
             ""}
       </Box>
       <BrewUpdater />

@@ -43,6 +43,7 @@ export default function BrewUpdater() {
             dispatch(writeTargetPressure(targetPressure[i]))
             break
           }
+          // if((Number(currentTargetTemperature !== Number())))
         }
       }
     }

@@ -10,9 +10,11 @@ const TARGET_PRESSURE_UUID = "202c8717-9005-4eb3-876a-70f977a89c72";
 const WEIGHT_UUID = "8fe6deb9-02f5-4dbd-9bec-1b7291a9ba5a";
 const FLOW_UUID = "3a19025c-0dc3-492c-ae05-db00dfad91cd";
 const TARGET_WEIGHT_UUID = "9414b5a6-fcb2-492d-8023-e34348fa7870";
+const TARGET_TEMPERATURE_UUID = "fa62b5ea-6b4e-477e-ba05-7cefbe3d63b5";
 
 let characteristicTargetWeight = {},
   characteristicTargetPressure = {},
+  characteristicTargetTemperature = {},
   characteristicBrew = {},
   device = {}
 
@@ -142,6 +144,13 @@ export const writeTargetPressure = targetPressure => async (dispatch, getState) 
     })
 }
 
+export const writeTargetTemperature = targetTemp => async (dispatch, getState) => {
+  characteristicTargetTemperature.writeValue(Uint8Array.of(targetTemp * 10)).then(_ => console.log("Target Temperature changed to: ", targetTemp * 10))
+    .catch(error => {
+      console.log('Argh! ' + error);
+    })
+}
+
 export const connectBluetooth = _ => async (dispatch) => {
   try {
     connectToBluetoothDevice().then(({ device, server }) => {
@@ -206,6 +215,17 @@ export const connectBluetooth = _ => async (dispatch) => {
                     // dispatch(bleSlice.actions.setCharacteristicTargetPressure(newCharacteristicTargetPressure))
                     return newService;
                   }
+                )
+            .then(newService =>
+              newService.getCharacteristic(TARGET_TEMPERATURE_UUID).then(c => c.startNotifications())
+                .then(
+                  newCharacteristicTargetTemperature => {
+                    newCharacteristicTargetTemperature.addEventListener('characteristicvaluechanged', event => {
+                      console.log("Temperature to" + event.target.value.getInt8(0))
+                    })
+                    console.log("Target Temperature BLE characteristic added")
+                    characteristicTargetTemperature = newCharacteristicTargetTemperature
+                  }
                 ).then(newService =>
                   newService.getCharacteristic(TARGET_WEIGHT_UUID).then(c => c.startNotifications())
                     .then(
@@ -253,7 +273,7 @@ export const connectBluetooth = _ => async (dispatch) => {
                                 console.log("Pressure BLE characteristic added")
                               }
                             )
-                            .catch(e => console.log(e)))))))
+                            .catch(e => console.log(e))))))))
     device.addEventListener('gattserverdisconnected', () => {
       disconnectFromBluetoothDevice()
       dispatch(bleSlice.actions.setDevice(null))
