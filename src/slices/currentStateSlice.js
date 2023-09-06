@@ -57,7 +57,7 @@ export const currentStateSlice = createSlice({
   },
 })
 
-export const { setCurrentBrew, setCurrentFlow, setCurrentManualBrew, setCurrentPressure, setCurrentTemperature, setCurrentWeight, setCurrentTargetPressure, setCurrentEndTime, setCurrentStartTime } = currentStateSlice.actions
+export const { setCurrentBrew, setCurrentTargetTemperature, setCurrentFlow, setCurrentManualBrew, setCurrentPressure, setCurrentTemperature, setCurrentWeight, setCurrentTargetPressure, setCurrentEndTime, setCurrentStartTime } = currentStateSlice.actions
 
 export const selectCurrentTargetPresure = (state) => state.currentState.currentTargetPressure
 
@@ -69,7 +69,7 @@ export const selectCurrentStartTime = (state) => state.currentState.currentStart
 export const selectCurrentEndTime = (state) => state.currentState.currentEndTime
 export const selectCurrentBrew = (state) => state.currentState.currentBrew
 export const selectCurrentFlow = (state) => state.currentState.currentFlow
-
+export const selectCurrentTargetTemperature = state => state.currentState.currentTargetTemperature
 
 
 export default currentStateSlice.reducer

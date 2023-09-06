@@ -33,6 +33,7 @@ import BrewUpdater from './components/BrewUpdater';
 import Steam from './components/Steam';
 import SettingsPage from './components/SettingsPage';
 import { writeTargetTemperature } from './slices/bluetoothSlice';
+import {setCurrentTargetTemperature} from "./slices/currentStateSlice"
 
 const drawerWidth = 240;
 
@@ -164,7 +165,8 @@ function App() {
               }}
               onClick={() => {
                 setSelectedPage("dashboard")
-                dispatch(writeTargetTemperature(104*10))
+                dispatch(setCurrentTargetTemperature(104))
+                dispatch(writeTargetTemperature(104))
                 dispatch(setSpecs({
                   height: '450px',
                   displayYaxisLegend: true
